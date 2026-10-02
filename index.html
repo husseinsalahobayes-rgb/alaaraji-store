@@ -94,7 +94,7 @@ footer{padding:50px 6%;text-align:center;color:#777;border-top:1px solid #161616
 <div class="bg-grid"></div><div class="glow g1"></div><div class="glow g2"></div>
 <nav><div class="logo">AL<span>AARAJI</span> STORE</div><div style="display:flex;gap:14px;align-items:center" class="nav-links"><a href="#booking" style="color:#ddd;text-decoration:none;font-size:13px">Book</a><a href="#repair" style="color:#ddd;text-decoration:none;font-size:13px">Repair</a><a href="#unlock" style="color:#ddd;text-decoration:none;font-size:13px">Unlock</a></div><div class="nav-actions">
 <button class="icon-btn" title="Language" onclick="openModal('langModal')">🌐</button>
-<button class="icon-btn" title="Account" onclick="openModal('authModal')">👤</button>
+<button id="accountButton" class="icon-btn" title="Account" onclick="openModal('authModal')">👤 <span id="accountLabel" style="font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span></button>
 <button class="icon-btn" title="Cart" onclick="openCart()">🛒 <span id="cartCount">0</span></button>
 </div></nav>
 
@@ -264,7 +264,7 @@ footer{padding:50px 6%;text-align:center;color:#777;border-top:1px solid #161616
 <div class="modal" id="langModal"><div class="modal-card"><div class="modal-head"><h2>Choose Language</h2><button class="close" onclick="closeModal('langModal')">×</button></div><div class="lang-list" id="langList"></div></div></div>
 
 <div class="modal" id="authModal"><div class="modal-card"><div class="modal-head"><h2>Sign in / Sign up</h2><button class="close" onclick="closeModal('authModal')">×</button></div>
-<p style="color:#999">Choose a sign-in method.</p><div class="choice-grid">
+<div id="authStatus" style="margin:12px 0 16px"></div><p id="authPrompt" style="color:#999">Choose a sign-in method.</p><div id="authChoices" class="choice-grid">
 <button class="choice" onclick="social('Google')"><div class="sym">G</div>Google</button>
 <button class="choice" onclick="social('Apple ID')"><div class="sym"></div>Apple ID</button>
 <button class="choice" onclick="social('Facebook')"><div class="sym">f</div>Facebook</button>
@@ -678,15 +678,60 @@ async function bookOnline(){
   toast('Booking saved successfully: '+d.model+' — '+formatIQD(total));
 }
 
-window.addEventListener('DOMContentLoaded',()=>{
-  initAlaarajiBackend();
-  if(alaarajiSupabase){
-    alaarajiSupabase.auth.onAuthStateChange((event, session)=>{
-      if(event === 'SIGNED_IN' && session?.user){
-        toast('Signed in with Google: '+(session.user.email||'Google account'));
-      }
-    });
+function updateAccountUI(user){
+  const status=document.getElementById('authStatus');
+  const choices=document.getElementById('authChoices');
+  const prompt=document.getElementById('authPrompt');
+  const label=document.getElementById('accountLabel');
+  if(!status) return;
+  if(user){
+    const name=user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Google User';
+    const email=user.email || '';
+    const avatar=user.user_metadata?.avatar_url || '';
+    if(label) label.textContent=name;
+    status.innerHTML=`<div style="display:flex;align-items:center;gap:12px;padding:14px;border:1px solid rgba(215,173,75,.35);border-radius:16px;background:rgba(215,173,75,.07)">
+      ${avatar ? `<img src="${escapeAttr(avatar)}" alt="" style="width:46px;height:46px;border-radius:50%;object-fit:cover;border:1px solid #d7ad4b">` : `<div style="width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#d7ad4b;color:#111;font-weight:900">${escapeHtml(name.charAt(0).toUpperCase())}</div>`}
+      <div style="min-width:0;flex:1"><div style="font-weight:800;color:#f3d27a">${escapeHtml(name)}</div><div style="font-size:12px;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(email)}</div></div>
+    </div>`;
+    if(prompt) prompt.textContent='You are signed in.';
+    if(choices) choices.style.display='none';
+  }else{
+    if(label) label.textContent='';
+    status.innerHTML='';
+    if(prompt) prompt.textContent='Choose a sign-in method.';
+    if(choices) choices.style.display='grid';
   }
+}
+
+async function refreshAuthUI(){
+  if(!alaarajiSupabase) return;
+  const {data,error}=await alaarajiSupabase.auth.getUser();
+  if(!error) updateAccountUI(data?.user || null);
+}
+
+async function signOutAlaaraji(){
+  if(!alaarajiSupabase) return;
+  const {error}=await alaarajiSupabase.auth.signOut();
+  if(error){ toast('Could not sign out. Please try again.'); return; }
+  updateAccountUI(null);
+  document.getElementById('authArea').innerHTML='';
+  toast('You have been signed out.');
+}
+
+window.addEventListener('DOMContentLoaded', async ()=>{
+  await initAlaarajiBackend();
+  if(!alaarajiSupabase) return;
+
+  // Restore the Google session after the OAuth redirect/refresh.
+  await refreshAuthUI();
+
+  alaarajiSupabase.auth.onAuthStateChange((event, session)=>{
+    updateAccountUI(session?.user || null);
+    if(event === 'SIGNED_IN' && session?.user){
+      const name=session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email || 'Google account';
+      toast('Welcome, '+name);
+    }
+  });
 });
 </script>
 
