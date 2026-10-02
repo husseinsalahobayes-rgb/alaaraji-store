@@ -319,7 +319,35 @@ function setLanguage(lang){
  else {document.getElementById('welcomeEn').textContent='WELCOME TO ALAARAJI STORE';document.getElementById('welcomeAr').textContent='مرحبا بك في الاعرجي ستور';}
 }
 
-function social(provider){toast(provider+' login is ready for OAuth connection.');}
+async function social(provider){
+  // Real OAuth for Google through Supabase.
+  if(provider === 'Google'){
+    try{
+      if(!alaarajiSupabase){
+        await initAlaarajiBackend();
+      }
+      if(!alaarajiSupabase){
+        toast('Supabase is not connected. Please refresh and try again.');
+        return;
+      }
+      const redirectTo = window.location.origin + window.location.pathname;
+      closeModal('authModal');
+      const { error } = await alaarajiSupabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo }
+      });
+      if(error){
+        console.error('Google OAuth error:', error);
+        toast('Google sign-in error: '+error.message);
+      }
+    }catch(err){
+      console.error('Google OAuth error:', err);
+      toast('Google sign-in could not start. Please try again.');
+    }
+    return;
+  }
+  toast(provider+' login will be connected next.');
+}
 function emailAuth(){
  document.getElementById('authArea').innerHTML=`<div class="field"><label>Email address</label><input type="email" placeholder="name@example.com"></div><div class="field"><label>Password</label><input type="password" placeholder="••••••••"></div><button class="primary" style="width:100%;margin-top:15px" onclick="toast('Connect Firebase/Supabase for real email authentication.')">Continue</button>`;
 }
@@ -650,7 +678,16 @@ async function bookOnline(){
   toast('Booking saved successfully: '+d.model+' — '+formatIQD(total));
 }
 
-window.addEventListener('DOMContentLoaded',()=>{initAlaarajiBackend();});
+window.addEventListener('DOMContentLoaded',()=>{
+  initAlaarajiBackend();
+  if(alaarajiSupabase){
+    alaarajiSupabase.auth.onAuthStateChange((event, session)=>{
+      if(event === 'SIGNED_IN' && session?.user){
+        toast('Signed in with Google: '+(session.user.email||'Google account'));
+      }
+    });
+  }
+});
 </script>
 
 </body></html>
