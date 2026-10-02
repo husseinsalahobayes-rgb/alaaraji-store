@@ -383,7 +383,7 @@ function renderBuyProducts() {
   const arr=getFilteredBuyProducts();
   count.textContent=arr.length+' products';
   grid.innerHTML=arr.map((p,i)=>`
-    <article class="buy-product-card ${selectedBuyProduct?.name===p.name?'selected':''}" onclick="selectBuyProduct(${JSON.stringify(p.name)})">
+    <article class="buy-product-card ${selectedBuyProduct?.name===p.name?'selected':''}" onclick="selectBuyProduct('${escapeAttr(p.name)}')">
       <div class="buy-brand">${escapeHtml(p.brand)}</div>
       <div class="buy-device-icon">${escapeHtml(productIcon(p.brand))}</div>
       <div class="buy-product-name">${escapeHtml(p.name)}</div>
@@ -393,6 +393,7 @@ function renderBuyProducts() {
 }
 function selectBuyProduct(name) {
   selectedBuyProduct=ALAARAJI_BUY_PRODUCTS.find(p=>p.name===name)||null;
+  if(selectedBuyProduct){ toast('Selected: '+selectedBuyProduct.name+' — '+formatIQD(selectedBuyProduct.price)); }
   const box=document.getElementById('bookingSelected');
   if(!selectedBuyProduct) { box.hidden=true; renderBuyProducts(); return; }
   box.hidden=false;
