@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alaaraji Store | الاعرجي ستور</title>
+<style>
+:root{--gold:#d7ad4b;--gold2:#f4d47a;--bg:#050505;--panel:#101010;--muted:#9b9b9b;}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:#fff;font-family:Inter,system-ui,-apple-system,Segoe UI,Tahoma,Arial,sans-serif;overflow-x:hidden}
+button,input{font:inherit} button{cursor:pointer}
+.bg-grid{position:fixed;inset:0;z-index:-4;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:42px 42px}
+.glow{position:fixed;border-radius:50%;filter:blur(90px);opacity:.25;z-index:-3} .g1{width:420px;height:420px;background:#8b651d;top:-180px;left:-100px} .g2{width:380px;height:380px;background:#4b3915;right:-150px;bottom:10%}
+nav{height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 5%;position:fixed;top:0;left:0;right:0;z-index:20;background:rgba(5,5,5,.7);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.07)}
+.logo{font-size:21px;font-weight:900;letter-spacing:.4px} .logo span{color:var(--gold)} .nav-actions{display:flex;gap:10px}
+.icon-btn,.primary,.ghost{border:1px solid rgba(215,173,75,.35);background:rgba(255,255,255,.04);color:#fff;border-radius:14px;padding:11px 14px;transition:.25s}
+.icon-btn:hover,.ghost:hover{transform:translateY(-2px);border-color:var(--gold);background:rgba(215,173,75,.1)} .primary{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#090909;border:0;font-weight:900;padding:14px 23px;box-shadow:0 10px 35px rgba(215,173,75,.2)}
+.hero{min-height:100vh;padding:120px 6% 60px;display:grid;place-items:center;position:relative}
+.hero-card{max-width:900px;text-align:center;padding:44px 30px;border:1px solid rgba(215,173,75,.25);border-radius:36px;background:rgba(10,10,10,.58);box-shadow:0 0 80px rgba(215,173,75,.08);backdrop-filter:blur(8px);animation:cardIn 1.1s ease}
+@keyframes cardIn{from{opacity:0;transform:scale(.94) translateY(25px)}to{opacity:1;transform:none}}
+.badge{display:inline-flex;padding:8px 14px;border-radius:999px;border:1px solid rgba(215,173,75,.3);color:var(--gold2);font-size:12px;letter-spacing:2px;text-transform:uppercase}
+h1{font-size:clamp(42px,7vw,84px);line-height:1;margin:22px 0 12px;font-weight:950;letter-spacing:-3px}
+.ar{font-size:clamp(27px,4vw,47px);font-weight:900;color:var(--gold2);direction:rtl;margin:10px 0 18px}
+.hero p{color:#a9a9a9;font-size:16px} .hero-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+.float{position:absolute;z-index:-1;padding:14px 17px;border-radius:20px;background:rgba(18,18,18,.7);border:1px solid rgba(255,255,255,.08);box-shadow:0 18px 55px rgba(0,0,0,.5);color:#cfcfcf;animation:float 5s ease-in-out infinite}
+.float b{color:var(--gold2)} .phone{left:7%;top:30%;font-size:31px;animation-delay:-1s} .tablet{right:7%;top:39%;font-size:29px;animation-delay:-2.2s} .chip{left:11%;bottom:19%;font-size:25px;animation-delay:-3s} .tools{right:12%;bottom:17%;font-size:24px;animation-delay:-4s}
+.brand{font-size:14px;letter-spacing:1px} .apple{right:22%;top:20%;font-size:34px;animation-delay:-1.4s} .xiaomi{left:23%;top:18%;animation-delay:-2.7s} .tecno{right:20%;bottom:24%;animation-delay:-.5s} .realme{left:22%;bottom:25%;animation-delay:-3.6s} .samsung{right:30%;top:15%;animation-delay:-4.2s}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-20px) rotate(2deg)}}
+.section{padding:90px 6%;max-width:1200px;margin:auto} .section-title{font-size:34px;margin:0 0 10px} .section-sub{color:#999;margin-bottom:28px}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px} .product{padding:20px;border-radius:22px;background:linear-gradient(145deg,#151515,#0b0b0b);border:1px solid rgba(255,255,255,.07)} .device{height:145px;display:grid;place-items:center;font-size:70px;color:var(--gold2);background:radial-gradient(circle,rgba(215,173,75,.15),transparent 65%);border-radius:18px} .product h3{margin:15px 0 5px} .product small{color:#888}
+.cart-bar{display:flex;justify-content:space-between;align-items:center;margin-top:25px;padding:18px 20px;border-radius:20px;background:#101010;border:1px solid rgba(215,173,75,.2)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;z-index:50} .modal.open{display:flex} .modal-card{width:min(560px,100%);max-height:90vh;overflow:auto;background:#111;border:1px solid rgba(215,173,75,.3);border-radius:28px;padding:25px;box-shadow:0 30px 100px #000}
+.modal-head{display:flex;justify-content:space-between;align-items:center} .close{background:none;border:0;color:#aaa;font-size:26px} .choice-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:20px} .choice{padding:15px 7px;border:1px solid rgba(255,255,255,.09);background:#181818;color:#fff;border-radius:16px;text-align:center} .choice:hover{border-color:var(--gold)} .choice .sym{font-size:25px;margin-bottom:7px} .field{margin-top:14px} .field label{display:block;color:#aaa;font-size:13px;margin-bottom:7px} .field input,.select{width:100%;padding:13px;border-radius:13px;border:1px solid #292929;background:#0a0a0a;color:#fff;outline:none} .country-row{display:grid;grid-template-columns:1.2fr 1fr;gap:10px} .country-list{max-height:280px;overflow:auto;margin-top:10px;border:1px solid #242424;border-radius:14px} .country-item{display:flex;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid #1d1d1d;cursor:pointer} .country-item:hover{background:#1b1b1b} .country-search{margin-top:10px}
+.lang-list{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:15px} .lang-item{padding:14px;border-radius:14px;background:#181818;border:1px solid #262626;color:#fff;text-align:left} .lang-item:hover{border-color:var(--gold)}
+.cart-list{display:grid;gap:12px;margin-top:18px} .cart-item{display:flex;align-items:center;gap:14px;padding:15px;background:#171717;border-radius:18px} .cart-icon{width:58px;height:58px;display:grid;place-items:center;border-radius:15px;background:#0b0b0b;font-size:27px;color:var(--gold2)} .qty{display:flex;gap:8px;align-items:center;margin-left:auto} .qty button{width:34px;height:34px;border-radius:10px;border:1px solid #333;background:#111;color:#fff}
+footer{padding:50px 6%;text-align:center;color:#777;border-top:1px solid #161616} 
+@media(max-width:700px){nav{padding:0 4%} .hero{padding-left:4%;padding-right:4%} .float{display:none} .choice-grid{grid-template-columns:repeat(3,1fr)} .lang-list{grid-template-columns:1fr} h1{letter-spacing:-2px}}
+</style>
+
+<style id="service-styles">
+.service-section{padding-top:55px}
+.service-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:22px}
+.service-icon{font-size:52px;width:90px;height:90px;display:grid;place-items:center;border-radius:25px;background:rgba(215,173,75,.08);border:1px solid rgba(215,173,75,.2)}
+.service-card{padding:25px;border:1px solid rgba(215,173,75,.18);background:linear-gradient(145deg,#141414,#0b0b0b);border-radius:26px;box-shadow:0 18px 60px rgba(0,0,0,.25)}
+.selector-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.selector-grid label,.service-card label{display:block;color:#aaa;font-size:13px;margin:0 0 7px}
+.service-card .select{width:100%;padding:14px;border-radius:13px;border:1px solid #292929;background:#090909;color:#fff;outline:none}
+.service-card textarea{resize:vertical}
+.action-row{display:flex;flex-wrap:wrap;gap:11px;margin-top:18px;align-items:center}
+.whatsapp-btn,.call-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:14px 20px;border-radius:14px;border:1px solid rgba(255,255,255,.1);color:#fff;background:#171717;font-weight:750;transition:.2s}
+.whatsapp-btn:hover,.call-btn:hover{transform:translateY(-2px);border-color:var(--gold);background:#1c1c1c}
+.note{color:#777;font-size:13px;margin:16px 0 0}
+.floating-wa{position:fixed;right:22px;bottom:24px;width:62px;height:62px;display:grid;place-items:center;border-radius:50%;z-index:40;text-decoration:none;font-size:30px;background:#25D366;color:white;box-shadow:0 12px 35px rgba(37,211,102,.35);animation:waPulse 2s infinite}
+@keyframes waPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@media(max-width:760px){.selector-grid{grid-template-columns:1fr}.service-head{align-items:center}.service-icon{width:70px;height:70px;font-size:36px}.service-card{padding:18px}}
+</style>
+
+<style id="booking-pro-styles">
+.booking-pro .service-head{margin-bottom:24px}
+.booking-pro-card{padding:22px;border:1px solid rgba(215,173,75,.22);background:linear-gradient(145deg,#151515,#090909);border-radius:28px;box-shadow:0 24px 80px rgba(0,0,0,.3)}
+.booking-toolbar{display:grid;grid-template-columns:minmax(280px,1fr) 210px 190px;gap:12px;align-items:center}
+.booking-search-wrap{position:relative;display:flex;align-items:center}
+.booking-search{width:100%;height:52px;padding:0 48px 0 48px;border-radius:16px;border:1px solid rgba(215,173,75,.25);background:#080808;color:#fff;outline:none}
+.booking-search:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(215,173,75,.08)}
+.booking-search-icon{position:absolute;left:17px;color:var(--gold2);font-size:25px;z-index:2}
+.booking-clear{position:absolute;right:10px;width:34px;height:34px;border:0;border-radius:10px;background:#171717;color:#aaa;font-size:20px}
+.booking-filter{height:52px;padding:0 14px;border-radius:16px;border:1px solid #292929;background:#080808;color:#fff;outline:none}
+.booking-stats{display:flex;gap:8px;color:#858585;font-size:13px;margin:15px 2px}
+.buy-product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;max-height:600px;overflow:auto;padding:2px 4px 6px 2px}
+.buy-product-card{position:relative;padding:17px;border-radius:19px;background:linear-gradient(145deg,#181818,#0d0d0d);border:1px solid rgba(255,255,255,.07);transition:.2s;cursor:pointer;min-height:170px}
+.buy-product-card:hover{transform:translateY(-3px);border-color:rgba(215,173,75,.55);box-shadow:0 15px 40px rgba(0,0,0,.35)}
+.buy-product-card.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 18px 50px rgba(215,173,75,.12)}
+.buy-brand{font-size:11px;color:var(--gold2);font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.buy-device-icon{height:48px;display:grid;place-items:center;font-size:30px}
+.buy-product-name{font-size:14px;font-weight:800;line-height:1.35;min-height:39px}
+.buy-price{font-size:16px;font-weight:950;color:var(--gold2);margin-top:9px}
+.buy-empty{text-align:center;padding:50px 15px;color:#888}
+.buy-empty div{font-size:40px;margin-bottom:8px}.buy-empty strong{display:block;color:#fff;font-size:18px}.buy-empty p{margin:6px 0}
+.booking-selected{margin-top:16px;padding:15px 17px;border-radius:19px;background:rgba(215,173,75,.06);border:1px solid rgba(215,173,75,.28);display:flex;align-items:center;justify-content:space-between;gap:15px}
+.selected-product-main{display:flex;align-items:center;gap:13px}.selected-product-icon{width:52px;height:52px;display:grid;place-items:center;border-radius:15px;background:#090909;font-size:25px}
+.selected-label{font-size:10px;color:#8c8c8c;letter-spacing:1.4px;font-weight:900}.booking-selected h3{margin:3px 0;font-size:16px}.booking-selected p{margin:0;color:#999;font-size:12px}
+.selected-price{font-size:20px;font-weight:950;color:var(--gold2);white-space:nowrap}
+.booking-request-box{display:grid;grid-template-columns:1fr 190px;gap:14px;margin-top:16px}
+.booking-request-field label,.booking-quantity-field label{display:block;color:#aaa;font-size:13px;margin-bottom:7px}
+.booking-request-field .select{width:100%;height:48px}.qty-control{height:48px;display:flex;align-items:center;border:1px solid #292929;background:#090909;border-radius:13px;overflow:hidden}
+.qty-control button{width:45px;height:100%;border:0;background:#141414;color:#fff;font-size:22px}.qty-control input{width:100%;height:100%;border:0;background:#090909;color:#fff;text-align:center;outline:none}
+.booking-actions-pro{margin-top:18px}.booking-actions-pro .primary{min-width:170px}
+@media(max-width:980px){.booking-toolbar{grid-template-columns:1fr 1fr}.booking-search-wrap{grid-column:1/-1}.buy-product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.booking-toolbar,.booking-request-box{grid-template-columns:1fr}.buy-product-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-height:520px}.booking-selected{align-items:flex-start;flex-direction:column}.selected-price{padding-left:65px}.booking-actions-pro>*{width:100%}}
+</style>
+
+</head>
+<body>
+<div class="bg-grid"></div><div class="glow g1"></div><div class="glow g2"></div>
+<nav><div class="logo">AL<span>AARAJI</span> STORE</div><div style="display:flex;gap:14px;align-items:center" class="nav-links"><a href="#booking" style="color:#ddd;text-decoration:none;font-size:13px">Book</a><a href="#repair" style="color:#ddd;text-decoration:none;font-size:13px">Repair</a><a href="#unlock" style="color:#ddd;text-decoration:none;font-size:13px">Unlock</a></div><div class="nav-actions">
+<button class="icon-btn" title="Language" onclick="openModal('langModal')">🌐</button>
+<button class="icon-btn" title="Account" onclick="openModal('authModal')">👤</button>
+<button class="icon-btn" title="Cart" onclick="openCart()">🛒 <span id="cartCount">0</span></button>
+</div></nav>
+
+<main>
+<section class="hero">
+<div class="float phone">📱 <b>PHONE</b></div><div class="float tablet">📲 <b>TABLET</b></div>
+<div class="float chip">⚙️ TECH</div><div class="float tools">🔧 🖥️ 💻</div>
+<div class="float brand apple"></div><div class="float brand xiaomi">XIAOMI</div><div class="float brand tecno">TECNO</div>
+<div class="float brand realme">realme</div><div class="float brand samsung">SAMSUNG</div>
+<div class="hero-card">
+<div class="badge">Premium Technology Store</div>
+<h1 id="welcomeEn">WELCOME TO ALAARAJI STORE</h1>
+<div class="ar" id="welcomeAr">مرحبا بك في الاعرجي ستور</div>
+<p>Phones • Tablets • Accessories • Technology • Repair</p>
+<div class="hero-buttons"><button class="primary" onclick="openModal('authModal')">START / ابدأ</button><button class="ghost" onclick="document.getElementById('shop').scrollIntoView()">EXPLORE STORE</button></div>
+</div></section>
+
+<section class="section" id="shop">
+<h2 class="section-title">Featured Technology</h2><div class="section-sub">A professional store area ready for your real products.</div>
+<div class="products" id="products"></div>
+<div class="cart-bar"><span>🛒 Cart: <b id="cartText">0 items</b></span><button class="primary" onclick="openCart()">Open Cart</button></div>
+</section>
+</main>
+
+
+<!-- ALAARAJI STORE SERVICES -->
+<section class="section service-section booking-pro" id="booking">
+  <div class="service-head">
+    <div>
+      <div class="badge">STORE SERVICES</div>
+      <h2 class="section-title">Book or Buy a Product</h2>
+      <p class="section-sub">Search the product, compare the exact price, choose your request, and book it in seconds.</p>
+    </div>
+    <div class="service-icon">🛍️</div>
+  </div>
+
+  <div class="booking-pro-card">
+    <div class="booking-toolbar">
+      <div class="booking-search-wrap">
+        <span class="booking-search-icon">⌕</span>
+        <input id="buySearch" class="booking-search" type="search"
+               placeholder="Search product or brand..." autocomplete="off"
+               oninput="renderBuyProducts()">
+        <button class="booking-clear" type="button" onclick="clearBuySearch()" aria-label="Clear search">×</button>
+      </div>
+      <select id="buyBrand" class="booking-filter" onchange="renderBuyProducts()">
+        <option value="">All brands</option>
+      </select>
+      <select id="buySort" class="booking-filter" onchange="renderBuyProducts()">
+        <option value="featured">Featured</option>
+        <option value="priceAsc">Price: Low to High</option>
+        <option value="priceDesc">Price: High to Low</option>
+        <option value="name">Name A–Z</option>
+      </select>
+    </div>
+
+    <div class="booking-stats">
+      <span id="buyResultCount">0 products</span>
+      <span>•</span>
+      <span>Prices in IQD</span>
+    </div>
+
+    <div id="buyProductGrid" class="buy-product-grid"></div>
+
+    <div id="buyEmpty" class="buy-empty" hidden>
+      <div>🔎</div>
+      <strong>No matching products</strong>
+      <p>Try another product name or brand.</p>
+    </div>
+
+    <div class="booking-selected" id="bookingSelected" hidden>
+      <div class="selected-product-main">
+        <div class="selected-product-icon">📱</div>
+        <div>
+          <div class="selected-label">SELECTED PRODUCT</div>
+          <h3 id="selectedBuyName">—</h3>
+          <p id="selectedBuyBrand">—</p>
+        </div>
+      </div>
+      <div class="selected-price" id="selectedBuyPrice">0 د.ع</div>
+    </div>
+
+    <div class="booking-request-box">
+      <div class="booking-request-field">
+        <label for="buyRequest">Request</label>
+        <select id="buyRequest" class="select">
+          <option value="Buy product">Buy product</option>
+          <option value="Book product">Book product</option>
+          <option value="Ask about availability">Ask about availability</option>
+        </select>
+      </div>
+      <div class="booking-quantity-field">
+        <label for="buyQty">Quantity</label>
+        <div class="qty-control">
+          <button type="button" onclick="changeBuyQty(-1)">−</button>
+          <input id="buyQty" value="1" min="1" max="99" type="number" inputmode="numeric">
+          <button type="button" onclick="changeBuyQty(1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row booking-actions-pro">
+      <button class="primary" onclick="bookOnline()">📅 Book Online</button>
+      <button class="whatsapp-btn" onclick="bookWhatsApp()">💬 Book on WhatsApp</button>
+      <a class="call-btn" href="tel:+9647818667474">📞 Call +964 781 866 7474</a>
+    </div>
+    <p class="note">WhatsApp: <b>+964 781 866 7474</b> — your selected product, price and quantity will be included in the booking message.</p>
+  </div>
+</section>
+
+<section class="section service-section" id="repair">
+  <div class="service-head">
+    <div>
+      <div class="badge">REPAIR CENTER</div>
+      <h2 class="section-title">Repair Your Product</h2>
+      <p class="section-sub">Select the brand, model and the component you want repaired or replaced.</p>
+    </div>
+    <div class="service-icon">🔧</div>
+  </div>
+  <div class="service-card">
+    <div class="selector-grid">
+      <div><label>Brand</label><select id="repairBrand" class="select" onchange="fillModels('repairBrand','repairModel')"></select></div>
+      <div><label>Model</label><select id="repairModel" class="select"></select></div>
+      <div><label>What do you want to repair?</label><select id="repairPart" class="select">
+        <option>Screen / Display</option><option>Back Cover</option><option>Headset / Earpiece</option><option>Microphone</option>
+        <option>Charging Port</option><option>Battery</option><option>Camera</option><option>Speaker</option><option>Power Button</option><option>Volume Buttons</option><option>Other</option>
+      </select></div>
+    </div>
+    <div class="field"><label>Describe the problem (optional)</label><textarea id="repairNote" class="select" rows="4" placeholder="Tell us what happened to the device..."></textarea></div>
+    <div class="action-row">
+      <button class="primary" onclick="repairOnline()">📅 Book Repair Online</button>
+      <button class="whatsapp-btn" onclick="repairWhatsApp()">💬 Send Repair Request on WhatsApp</button>
+      <a class="call-btn" href="tel:+9647818667474">📞 Call Repair Center</a>
+    </div>
+  </div>
+</section>
+
+<section class="section service-section" id="unlock">
+  <div class="service-head">
+    <div>
+      <div class="badge">DEVICE SERVICES</div>
+      <h2 class="section-title">Unlock Your Product</h2>
+      <p class="section-sub">Choose the manufacturer and model to request an eligible unlocking service.</p>
+    </div>
+    <div class="service-icon">🔓</div>
+  </div>
+  <div class="service-card">
+    <div class="selector-grid">
+      <div><label>Brand</label><select id="unlockBrand" class="select" onchange="fillModels('unlockBrand','unlockModel')"></select></div>
+      <div><label>Model</label><select id="unlockModel" class="select"></select></div>
+      <div><label>Service</label><select id="unlockType" class="select">
+        <option value="network">Network / Carrier Unlock</option><option value="sim">SIM Unlock</option><option value="screen">Screen Lock Assistance</option><option value="frp">FRP Unlock</option><option value="account">Account/Activation Service — eligibility check</option><option value="other">Other Unlock Service</option>
+      </select></div>
+    </div>
+    <div class="action-row">
+      <button class="primary" onclick="unlockOnline()">📅 Request Unlock Online</button>
+      <button class="whatsapp-btn" onclick="unlockWhatsApp()">💬 Request Unlock on WhatsApp</button>
+      <a class="call-btn" href="tel:+9647818667474">📞 Call +964 781 866 7474</a>
+    </div>
+    <p class="note">Unlocking is subject to device, carrier, account and legal eligibility. The store can verify the model before accepting the request.</p>
+  </div>
+</section>
+
+<a class="floating-wa" href="https://wa.me/9647818667474" target="_blank" rel="noopener" aria-label="Chat with Alaaraji Store on WhatsApp">💬</a>
+<footer>© 2026 Alaaraji Store — الاعرجي ستور</footer>
+
+<div class="modal" id="langModal"><div class="modal-card"><div class="modal-head"><h2>Choose Language</h2><button class="close" onclick="closeModal('langModal')">×</button></div><div class="lang-list" id="langList"></div></div></div>
+
+<div class="modal" id="authModal"><div class="modal-card"><div class="modal-head"><h2>Sign in / Sign up</h2><button class="close" onclick="closeModal('authModal')">×</button></div>
+<p style="color:#999">Choose a sign-in method.</p><div class="choice-grid">
+<button class="choice" onclick="social('Google')"><div class="sym">G</div>Google</button>
+<button class="choice" onclick="social('Apple ID')"><div class="sym"></div>Apple ID</button>
+<button class="choice" onclick="social('Facebook')"><div class="sym">f</div>Facebook</button>
+<button class="choice" onclick="emailAuth()"><div class="sym">✉</div>Email</button>
+<button class="choice" onclick="phoneAuth()"><div class="sym">☎</div>Phone</button>
+</div><div id="authArea"></div></div></div>
+
+<div class="modal" id="cartModal"><div class="modal-card"><div class="modal-head"><h2>🛒 Your Cart</h2><button class="close" onclick="closeModal('cartModal')">×</button></div><div id="cartList" class="cart-list"></div><div class="cart-bar"><b>Total items: <span id="totalItems">0</span></b><button class="primary" onclick="checkout()">Secure Checkout</button></div></div></div>
+
+<script>
+const languages=[["English", "EN"], ["العربية", "AR"], ["Español", "ES"], ["Français", "FR"], ["Deutsch", "DE"], ["中文", "ZH"], ["हिन्दी", "HI"], ["Português", "PT"], ["Русский", "RU"], ["日本語", "JA"], ["한국어", "KO"], ["Türkçe", "TR"], ["Italiano", "IT"], ["Bahasa Indonesia", "ID"], ["اردو", "UR"]];
+const countries=[["Iraq", "+964", "🇮🇶"], ["United States", "+1", "🇺🇸"], ["Canada", "+1", "🇨🇦"], ["United Kingdom", "+44", "🇬🇧"], ["United Arab Emirates", "+971", "🇦🇪"], ["Saudi Arabia", "+966", "🇸🇦"], ["Kuwait", "+965", "🇰🇼"], ["Qatar", "+974", "🇶🇦"], ["Bahrain", "+973", "🇧🇭"], ["Oman", "+968", "🇴🇲"], ["Jordan", "+962", "🇯🇴"], ["Egypt", "+20", "🇪🇬"], ["Syria", "+963", "🇸🇾"], ["Lebanon", "+961", "🇱🇧"], ["Turkey", "+90", "🇹🇷"], ["Iran", "+98", "🇮🇷"], ["Germany", "+49", "🇩🇪"], ["France", "+33", "🇫🇷"], ["Italy", "+39", "🇮🇹"], ["Spain", "+34", "🇪🇸"], ["Portugal", "+351", "🇵🇹"], ["Netherlands", "+31", "🇳🇱"], ["Belgium", "+32", "🇧🇪"], ["Switzerland", "+41", "🇨🇭"], ["Austria", "+43", "🇦🇹"], ["Sweden", "+46", "🇸🇪"], ["Norway", "+47", "🇳🇴"], ["Denmark", "+45", "🇩🇰"], ["Finland", "+358", "🇫🇮"], ["Poland", "+48", "🇵🇱"], ["Greece", "+30", "🇬🇷"], ["Romania", "+40", "🇷🇴"], ["Ukraine", "+380", "🇺🇦"], ["Russia", "+7", "🇷🇺"], ["India", "+91", "🇮🇳"], ["Pakistan", "+92", "🇵🇰"], ["Bangladesh", "+880", "🇧🇩"], ["China", "+86", "🇨🇳"], ["Japan", "+81", "🇯🇵"], ["South Korea", "+82", "🇰🇷"], ["Indonesia", "+62", "🇮🇩"], ["Malaysia", "+60", "🇲🇾"], ["Singapore", "+65", "🇸🇬"], ["Thailand", "+66", "🇹🇭"], ["Vietnam", "+84", "🇻🇳"], ["Philippines", "+63", "🇵🇭"], ["Australia", "+61", "🇦🇺"], ["New Zealand", "+64", "🇳🇿"], ["South Africa", "+27", "🇿🇦"], ["Nigeria", "+234", "🇳🇬"], ["Kenya", "+254", "🇰🇪"], ["Morocco", "+212", "🇲🇦"], ["Algeria", "+213", "🇩🇿"], ["Tunisia", "+216", "🇹🇳"], ["Libya", "+218", "🇱🇾"], ["Sudan", "+249", "🇸🇩"], ["Ethiopia", "+251", "🇪🇹"], ["Ghana", "+233", "🇬🇭"], ["Brazil", "+55", "🇧🇷"], ["Mexico", "+52", "🇲🇽"], ["Argentina", "+54", "🇦🇷"], ["Chile", "+56", "🇨🇱"], ["Colombia", "+57", "🇨🇴"], ["Peru", "+51", "🇵🇪"], ["Afghanistan", "+93", "🇦🇫"], ["Albania", "+355", "🇦🇱"], ["Andorra", "+376", "🇦🇩"], ["Angola", "+244", "🇦🇴"], ["Antigua and Barbuda", "+1-268", "🇦🇬"], ["Armenia", "+374", "🇦🇲"], ["Azerbaijan", "+994", "🇦🇿"], ["Bahamas", "+1-242", "🇧🇸"], ["Barbados", "+1-246", "🇧🇧"], ["Belarus", "+375", "🇧🇾"], ["Belize", "+501", "🇧🇿"], ["Benin", "+229", "🇧🇯"], ["Bhutan", "+975", "🇧🇹"], ["Bolivia", "+591", "🇧🇴"], ["Bosnia and Herzegovina", "+387", "🇧🇦"], ["Botswana", "+267", "🇧🇼"], ["Brunei", "+673", "🇧🇳"], ["Bulgaria", "+359", "🇧🇬"], ["Burkina Faso", "+226", "🇧🇫"], ["Burundi", "+257", "🇧🇮"], ["Cambodia", "+855", "🇰🇭"], ["Cameroon", "+237", "🇨🇲"], ["Cape Verde", "+238", "🇨🇻"], ["Central African Republic", "+236", "🇨🇫"], ["Chad", "+235", "🇹🇩"], ["Comoros", "+269", "🇰🇲"], ["Congo", "+242", "🇨🇬"], ["Costa Rica", "+506", "🇨🇷"], ["Croatia", "+385", "🇭🇷"], ["Cuba", "+53", "🇨🇺"], ["Cyprus", "+357", "🇨🇾"], ["Czech Republic", "+420", "🇨🇿"], ["Djibouti", "+253", "🇩🇯"], ["Dominica", "+1-767", "🇩🇲"], ["Dominican Republic", "+1-809", "🇩🇴"], ["Ecuador", "+593", "🇪🇨"], ["El Salvador", "+503", "🇸🇻"], ["Equatorial Guinea", "+240", "🇬🇶"], ["Eritrea", "+291", "🇪🇷"], ["Estonia", "+372", "🇪🇪"], ["Eswatini", "+268", "🇸🇿"], ["Fiji", "+679", "🇫🇯"], ["Gabon", "+241", "🇬🇦"], ["Gambia", "+220", "🇬🇲"], ["Georgia", "+995", "🇬🇪"], ["Grenada", "+1-473", "🇬🇩"], ["Guatemala", "+502", "🇬🇹"], ["Guinea", "+224", "🇬🇳"], ["Guinea-Bissau", "+245", "🇬🇼"], ["Guyana", "+592", "🇬🇾"], ["Haiti", "+509", "🇭🇹"], ["Honduras", "+504", "🇭🇳"], ["Hungary", "+36", "🇭🇺"], ["Iceland", "+354", "🇮🇸"], ["Ireland", "+353", "🇮🇪"], ["Israel", "+972", "🇮🇱"], ["Jamaica", "+1-876", "🇯🇲"], ["Kazakhstan", "+7", "🇰🇿"], ["Kyrgyzstan", "+996", "🇰🇬"], ["Laos", "+856", "🇱🇦"], ["Latvia", "+371", "🇱🇻"], ["Lesotho", "+266", "🇱🇸"], ["Liberia", "+231", "🇱🇷"], ["Liechtenstein", "+423", "🇱🇮"], ["Lithuania", "+370", "🇱🇹"], ["Luxembourg", "+352", "🇱🇺"], ["Madagascar", "+261", "🇲🇬"], ["Malawi", "+265", "🇲🇼"], ["Maldives", "+960", "🇲🇻"], ["Mali", "+223", "🇲🇱"], ["Malta", "+356", "🇲🇹"], ["Mauritania", "+222", "🇲🇷"], ["Mauritius", "+230", "🇲🇺"], ["Moldova", "+373", "🇲🇩"], ["Monaco", "+377", "🇲🇨"], ["Mongolia", "+976", "🇲🇳"], ["Montenegro", "+382", "🇲🇪"], ["Mozambique", "+258", "🇲🇿"], ["Myanmar", "+95", "🇲🇲"], ["Namibia", "+264", "🇳🇦"], ["Nepal", "+977", "🇳🇵"], ["Nicaragua", "+505", "🇳🇮"], ["Niger", "+227", "🇳🇪"], ["North Macedonia", "+389", "🇲🇰"], ["Panama", "+507", "🇵🇦"], ["Papua New Guinea", "+675", "🇵🇬"], ["Paraguay", "+595", "🇵🇾"], ["Rwanda", "+250", "🇷🇼"], ["Samoa", "+685", "🇼🇸"], ["San Marino", "+378", "🇸🇲"], ["Senegal", "+221", "🇸🇳"], ["Serbia", "+381", "🇷🇸"], ["Seychelles", "+248", "🇸🇨"], ["Sierra Leone", "+232", "🇸🇱"], ["Slovakia", "+421", "🇸🇰"], ["Slovenia", "+386", "🇸🇮"], ["Somalia", "+252", "🇸🇴"], ["South Sudan", "+211", "🇸🇸"], ["Sri Lanka", "+94", "🇱🇰"], ["Suriname", "+597", "🇸🇷"], ["Tajikistan", "+992", "🇹🇯"], ["Tanzania", "+255", "🇹🇿"], ["Togo", "+228", "🇹🇬"], ["Tonga", "+676", "🇹🇴"], ["Trinidad and Tobago", "+1-868", "🇹🇹"], ["Turkmenistan", "+993", "🇹🇲"], ["Uganda", "+256", "🇺🇬"], ["Uruguay", "+598", "🇺🇾"], ["Uzbekistan", "+998", "🇺🇿"], ["Vanuatu", "+678", "🇻🇺"], ["Vatican City", "+39", "🇻🇦"], ["Venezuela", "+58", "🇻🇪"], ["Yemen", "+967", "🇾🇪"], ["Zambia", "+260", "🇿🇲"], ["Zimbabwe", "+263", "🇿🇼"], ["Kosovo", "+383", "🇽🇰"], ["Palestine", "+970", "🇵🇸"], ["Taiwan", "+886", "🇹🇼"], ["Hong Kong", "+852", "🇭🇰"], ["Macau", "+853", "🇲🇴"], ["Puerto Rico", "+1-787", "🇵🇷"], ["Guam", "+1-671", "🇬🇺"], ["Jersey", "+44-1534", "🇯🇪"], ["Isle of Man", "+44-1624", "🇮🇲"], ["Guernsey", "+44-1481", "🇬🇬"], ["Faroe Islands", "+298", "🇫🇴"], ["Greenland", "+299", "🇬🇱"], ["Curaçao", "+599", "🇨🇼"], ["Aruba", "+297", "🇦🇼"], ["Bermuda", "+1-441", "🇧🇲"], ["Cayman Islands", "+1-345", "🇰🇾"], ["British Virgin Islands", "+1-284", "🇻🇬"], ["U.S. Virgin Islands", "+1-340", "🇻🇮"], ["Montserrat", "+1-664", "🇲🇸"], ["Saint Lucia", "+1-758", "🇱🇨"], ["Saint Vincent and the Grenadines", "+1-784", "🇻🇨"], ["Saint Kitts and Nevis", "+1-869", "🇰🇳"], ["Saint Martin", "+590", "🇲🇫"], ["French Polynesia", "+689", "🇵🇫"], ["New Caledonia", "+687", "🇳🇨"], ["Réunion", "+262", "🇷🇪"]];
+const products=[
+['📱','iPhone 17 Pro Max','Premium smartphone'],['📱','Samsung Galaxy Ultra','Android flagship'],
+['📲','iPad Pro','Professional tablet'],['📱','Xiaomi 15 Ultra','Performance smartphone'],
+['📱','TECNO Phantom','Technology device'],['📱','realme GT','Performance phone']
+];
+let cart=[];
+
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+
+function renderProducts(){
+ const box=document.getElementById('products');
+ box.innerHTML=products.map((p,i)=>`<article class="product"><div class="device">${p[0]}</div><h3>${p[1]}</h3><small>${p[2]}</small><br><button class="primary" style="margin-top:14px;width:100%" onclick="addCart(${i})">Add to cart</button></article>`).join('');
+}
+function addCart(i){
+ const found=cart.find(x=>x.i===i); if(found) found.q++; else cart.push({i,q:1});
+ updateCart(); toast('Added to cart');
+}
+function updateCart(){
+ let n=cart.reduce((s,x)=>s+x.q,0); document.getElementById('cartCount').textContent=n; document.getElementById('cartText').textContent=n+' item'+(n===1?'':'s');
+}
+function openCart(){renderCart();openModal('cartModal')}
+function renderCart(){
+ const box=document.getElementById('cartList'); document.getElementById('totalItems').textContent=cart.reduce((s,x)=>s+x.q,0);
+ if(!cart.length){box.innerHTML='<div style="text-align:center;color:#888;padding:45px">Your cart is empty.</div>';return}
+ box.innerHTML=cart.map((x,k)=>`<div class="cart-item"><div class="cart-icon">${products[x.i][0]}</div><div><b>${products[x.i][1]}</b><div style="color:#888;font-size:13px">${products[x.i][2]}</div></div><div class="qty"><button onclick="changeQty(${k},-1)">−</button><b>${x.q}</b><button onclick="changeQty(${k},1)">+</button><button onclick="removeCart(${k})">🗑</button></div></div>`).join('');
+}
+function changeQty(k,d){cart[k].q+=d;if(cart[k].q<=0)cart.splice(k,1);updateCart();renderCart()}
+function removeCart(k){cart.splice(k,1);updateCart();renderCart()}
+function checkout(){toast('Checkout interface is ready — connect your payment/order backend next.')}
+function toast(t){let x=document.createElement('div');x.textContent=t;x.style='position:fixed;bottom:25px;left:50%;transform:translateX(-50%);z-index:100;padding:14px 20px;background:#171717;border:1px solid #d7ad4b;border-radius:14px;box-shadow:0 15px 50px #000';document.body.appendChild(x);setTimeout(()=>x.remove(),2600)}
+
+function renderLanguages(){
+ document.getElementById('langList').innerHTML=languages.map(l=>`<button class="lang-item" onclick="setLanguage('${l[0]}')">${l[1]} — ${l[0]}</button>`).join('');
+}
+function setLanguage(lang){
+ closeModal('langModal');toast('Language selected: '+lang);
+ if(lang==='العربية'){document.getElementById('welcomeEn').textContent='مرحبا بك في الاعرجي ستور';document.getElementById('welcomeAr').textContent='Welcome to Alaaraji Store';}
+ else {document.getElementById('welcomeEn').textContent='WELCOME TO ALAARAJI STORE';document.getElementById('welcomeAr').textContent='مرحبا بك في الاعرجي ستور';}
+}
+
+function social(provider){toast(provider+' login is ready for OAuth connection.');}
+function emailAuth(){
+ document.getElementById('authArea').innerHTML=`<div class="field"><label>Email address</label><input type="email" placeholder="name@example.com"></div><div class="field"><label>Password</label><input type="password" placeholder="••••••••"></div><button class="primary" style="width:100%;margin-top:15px" onclick="toast('Connect Firebase/Supabase for real email authentication.')">Continue</button>`;
+}
+function phoneAuth(){
+ document.getElementById('authArea').innerHTML=`<div class="field"><label>Search country or calling code</label><input id="countrySearch" class="country-search" placeholder="Iraq, +964..." oninput="filterCountries()"></div><div class="country-list" id="countryList"></div><div class="field"><label>Phone number</label><input type="tel" placeholder="Phone number"></div><button class="primary" style="width:100%;margin-top:15px" onclick="toast('OTP interface is ready — connect your SMS provider/backend.')">Send verification code</button>`;
+ renderCountries(countries);
+}
+function renderCountries(list){
+ document.getElementById('countryList').innerHTML=list.map(c=>`<div class="country-item" onclick="selectCountry('${c[0]}','${c[1]}')"><span style="font-size:22px">${c[2]}</span><span style="flex:1">${c[0]}</span><b>${c[1]}</b></div>`).join('');
+}
+function filterCountries(){
+ let q=document.getElementById('countrySearch').value.toLowerCase();
+ renderCountries(countries.filter(c=>(c[0]+' '+c[1]).toLowerCase().includes(q)));
+}
+function selectCountry(name,code){document.querySelector('#authArea input[type="tel"]').value=code+' ';toast(name+' '+code+' selected');}
+
+renderProducts();renderLanguages();updateCart();
+</script>
+
+
+<script id="booking-products-script">
+const ALAARAJI_BUY_PRODUCTS = [{"name": "Redmi Note 17 4G", "brand": "Xiaomi", "price": 365000}, {"name": "Redmi Note 17 Pro 5G", "brand": "Xiaomi", "price": 515000}, {"name": "Redmi Note 17 Pro Max", "brand": "Xiaomi", "price": 665000}, {"name": "Blackview Link 1 Kids", "brand": "Blackview", "price": 155000}, {"name": "Blackview MEGA 5", "brand": "Blackview", "price": 366000}, {"name": "iPhone 18 Pro Max Dual SIM (CH)", "brand": "Apple", "price": 2995000}, {"name": "iPhone 18 Pro Max (HK)", "brand": "Apple", "price": 2840000}, {"name": "HUAWEI Pura 90s Pro Max", "brand": "HUAWEI", "price": 1585000}, {"name": "HUAWEI Pura 90s Pro", "brand": "HUAWEI", "price": 1345000}, {"name": "iPhone 18 Pro Max (Middle East)", "brand": "Apple", "price": 2670000}, {"name": "Realme 16 Pro 5G", "brand": "Realme", "price": 593000}, {"name": "HONOR X7e Plus 5G", "brand": "HONOR", "price": 379000}, {"name": "Infinix HOT 70", "brand": "Infinix", "price": 324000}, {"name": "Infinix Hot 70 Pro 5G", "brand": "Infinix", "price": 460000}, {"name": "iPhone 16 Pro Max (Middle East)", "brand": "Apple", "price": 1760000}, {"name": "iPhone 17 Pro (HK)", "brand": "Apple", "price": 2460000}, {"name": "iPhone 17 Pro Max MASTER", "brand": "Apple", "price": 2070000}, {"name": "Realme C100x", "brand": "Realme", "price": 293000}, {"name": "HUAWEI nova 14i", "brand": "HUAWEI", "price": 295000}, {"name": "Redmi 17", "brand": "Xiaomi", "price": 247000}, {"name": "HONOR T 10", "brand": "HONOR", "price": 159000}, {"name": "Infinix GT 50 Pro", "brand": "Infinix", "price": 720000}, {"name": "Samsung Galaxy Z Fold 8 Ultra", "brand": "Samsung", "price": 2600000}, {"name": "Samsung Galaxy Z Fold 8", "brand": "Samsung", "price": 2499000}, {"name": "TECNO POVA 8 Pro 5G", "brand": "Tecno", "price": 599000}, {"name": "itel Power 80", "brand": "itel", "price": 233000}, {"name": "Itel City 200", "brand": "itel", "price": 195000}, {"name": "Realme C100i", "brand": "Realme", "price": 215000}, {"name": "Infinix Note 60", "brand": "Infinix", "price": 520000}, {"name": "HUAWEI nova 14 Pro", "brand": "HUAWEI", "price": 708000}, {"name": "POCO C85", "brand": "POCO", "price": 289000}, {"name": "Tecno Pova 7 Ultra 5G", "brand": "Tecno", "price": 482000}, {"name": "TECNO CAMON 50 Pro", "brand": "Tecno", "price": 475000}, {"name": "TECNO CAMON 50 Ultra 5G", "brand": "Tecno", "price": 595000}, {"name": "Galaxy A27 5G", "brand": "Samsung", "price": 439000}, {"name": "Infinix Note 60 Ultra", "brand": "Infinix", "price": 1038000}, {"name": "iPhone 17 Pro Max (Middle East)", "brand": "Apple", "price": 1985000}, {"name": "itel A200", "brand": "itel", "price": 169000}, {"name": "HONOR Magic V6", "brand": "HONOR", "price": 2530000}, {"name": "HONOR X7e", "brand": "HONOR", "price": 275000}, {"name": "iPhone 17 Air (Middle East)", "brand": "Apple", "price": 1430000}, {"name": "iPhone 17e (Middle East)", "brand": "Apple", "price": 1100000}, {"name": "iPhone 13 (ABM Warranty, Middle East)", "brand": "Apple", "price": 751000}, {"name": "iPhone 17 (Japan, eSIM)", "brand": "Apple", "price": 1380000}, {"name": "iPhone 17 (Middle East)", "brand": "Apple", "price": 1460000}, {"name": "iPhone 16 (India Warranty)", "brand": "Apple", "price": 1127000}, {"name": "iPhone 16 Dual SIM (China)", "brand": "Apple", "price": 1216000}, {"name": "iPhone 17 Pro Max (HK)", "brand": "Apple", "price": 2460000}, {"name": "iPhone 17 Pro (Middle East)", "brand": "Apple", "price": 1810000}, {"name": "iPhone 17 Pro Dual SIM (China)", "brand": "Apple", "price": 2040000}, {"name": "iPhone 17 Pro (Japan, eSIM)", "brand": "Apple", "price": 1780000}, {"name": "iPhone 17 Pro Max Dual SIM (China)", "brand": "Apple", "price": 2230000}, {"name": "iPhone 17 Pro Max (Japan, eSIM)", "brand": "Apple", "price": 1930000}, {"name": "Tecno Spark 50", "brand": "Tecno", "price": 285000}, {"name": "Tecno Spark 40C", "brand": "Tecno", "price": 265000}, {"name": "Tecno Pova Slim 5G", "brand": "Tecno", "price": 342000}, {"name": "Tecno Camon 40 Pro 5G", "brand": "Tecno", "price": 436000}, {"name": "Tecno Camon 40 Premier 5G", "brand": "Tecno", "price": 590000}, {"name": "Tecno Spark Go 3", "brand": "Tecno", "price": 195000}, {"name": "Redmi 15C", "brand": "Xiaomi", "price": 221000}, {"name": "Realme Note 60x", "brand": "Realme", "price": 189000}, {"name": "Realme GT 8 Pro", "brand": "Realme", "price": 1407000}, {"name": "Realme GT 7 Pro", "brand": "Realme", "price": 1175000}, {"name": "Realme C71", "brand": "Realme", "price": 225000}, {"name": "Realme 15T 5G", "brand": "Realme", "price": 379000}, {"name": "Realme 15 5G", "brand": "Realme", "price": 488000}, {"name": "Infinix Smart 20", "brand": "Infinix", "price": 185000}, {"name": "Infinix Smart 10 Plus", "brand": "Infinix", "price": 215000}, {"name": "Infinix Smart 10", "brand": "Infinix", "price": 185000}, {"name": "Realme 16 Pro+ 5G", "brand": "Realme", "price": 780000}, {"name": "Infinix Hot 60 Pro Plus", "brand": "Infinix", "price": 340000}, {"name": "Infinix Note 50 Pro Plus", "brand": "Infinix", "price": 557000}, {"name": "Infinix Hot 60 Pro", "brand": "Infinix", "price": 310000}, {"name": "Infinix Note 60 Pro", "brand": "Infinix", "price": 568000}, {"name": "Infinix Note Edge", "brand": "Infinix", "price": 426000}, {"name": "Nokia 106 (2023)", "brand": "Nokia", "price": 35000}, {"name": "Nokia 105 4G (2023)", "brand": "Nokia", "price": 35000}, {"name": "Nokia 125 4G", "brand": "Nokia", "price": 40000}, {"name": "Nokia 130 (2023)", "brand": "Nokia", "price": 55000}, {"name": "Nokia 150 (2023)", "brand": "Nokia", "price": 55000}, {"name": "Nokia 230 (2024)", "brand": "Nokia", "price": 94000}, {"name": "Nokia 235", "brand": "Nokia", "price": 73000}, {"name": "Nokia 2660 Flip", "brand": "Nokia", "price": 80000}, {"name": "Nokia 3210", "brand": "Nokia", "price": 75000}, {"name": "Redmi Note 15 Pro+ 5G", "brand": "Xiaomi", "price": 660000}, {"name": "Xiaomi 15T Pro", "brand": "Xiaomi", "price": 940000}, {"name": "Xiaomi 17T Pro", "brand": "Xiaomi", "price": 1060000}, {"name": "Xiaomi 17", "brand": "Xiaomi", "price": 1225000}, {"name": "Xiaomi 17 Ultra", "brand": "Xiaomi", "price": 1770000}, {"name": "POCO X8 PRO MAX", "brand": "POCO", "price": 827000}, {"name": "POCO X8 PRO", "brand": "POCO", "price": 625000}, {"name": "POCO F7 ULTRA", "brand": "POCO", "price": 995000}, {"name": "POCO C85", "brand": "POCO", "price": 289000}, {"name": "POCO C81 Pro", "brand": "POCO", "price": 212000}, {"name": "Redmi A7 Pro 4G", "brand": "Xiaomi", "price": 172000}, {"name": "Realme C85 Pro", "brand": "Realme", "price": 348000}, {"name": "Oppo Find X8 Pro", "brand": "Oppo", "price": 1390000}, {"name": "Oppo A6 Pro 4G", "brand": "Oppo", "price": 475000}, {"name": "Oppo A6 Pro 5G", "brand": "Oppo", "price": 525000}, {"name": "Oppo A6x 4G", "brand": "Oppo", "price": 247000}, {"name": "Oppo A5 5G", "brand": "Oppo", "price": 319000}, {"name": "Oppo A5X", "brand": "Oppo", "price": 209000}, {"name": "Motorola Moto Edge 70 Fusion 5G", "brand": "Motorola", "price": 505000}, {"name": "Motorola Moto G06", "brand": "Motorola", "price": 210000}, {"name": "vivo Y19s Pro", "brand": "Vivo", "price": 263000}, {"name": "vivo Y29", "brand": "Vivo", "price": 345000}, {"name": "vivo V50 5G", "brand": "Vivo", "price": 610000}, {"name": "HUAWEI Mate X7", "brand": "HUAWEI", "price": 2790000}, {"name": "HUAWEI nova 14", "brand": "HUAWEI", "price": 475000}, {"name": "HUAWEI Pura 80", "brand": "HUAWEI", "price": 942000}, {"name": "HUAWEI Pura 80 Ultra", "brand": "HUAWEI", "price": 1886000}, {"name": "Huawei Nova 15 Max", "brand": "HUAWEI", "price": 440000}, {"name": "HONOR 600", "brand": "HONOR", "price": 680000}, {"name": "HONOR 600 Pro", "brand": "HONOR", "price": 1100000}, {"name": "HONOR 400 Pro", "brand": "HONOR", "price": 879000}, {"name": "HONOR 600 Lite", "brand": "HONOR", "price": 420000}, {"name": "Galaxy Z Flip7", "brand": "Samsung", "price": 1400000}, {"name": "Galaxy A07", "brand": "Samsung", "price": 241001}, {"name": "Galaxy A17 5G", "brand": "Samsung", "price": 319001}, {"name": "Galaxy A26 5G", "brand": "Samsung", "price": 335000}, {"name": "Galaxy A36 5G", "brand": "Samsung", "price": 420000}, {"name": "Galaxy A37 5G", "brand": "Samsung", "price": 569000}, {"name": "Galaxy A56 5G", "brand": "Samsung", "price": 585000}, {"name": "Galaxy A57 5G", "brand": "Samsung", "price": 735000}, {"name": "HONOR Magic V5", "brand": "HONOR", "price": 1999000}, {"name": "HONOR Magic 8 Pro", "brand": "HONOR", "price": 1407000}, {"name": "HONOR X5c Plus", "brand": "HONOR", "price": 191000}, {"name": "HONOR X5c", "brand": "HONOR", "price": 175000}, {"name": "HONOR X6c", "brand": "HONOR", "price": 249000}, {"name": "HONOR X7d", "brand": "HONOR", "price": 299000}, {"name": "HONOR X8d", "brand": "HONOR", "price": 370000}, {"name": "HONOR X9c 5G", "brand": "HONOR", "price": 459000}, {"name": "HONOR X9d 5G", "brand": "HONOR", "price": 469000}, {"name": "Galaxy S25 Edge", "brand": "Samsung", "price": 1250001}, {"name": "Galaxy S25 Ultra", "brand": "Samsung", "price": 1355001}, {"name": "Galaxy Z Fold7", "brand": "Samsung", "price": 2199000}, {"name": "Galaxy S26+", "brand": "Samsung", "price": 1400001}, {"name": "Samsung Galaxy S26", "brand": "Samsung", "price": 1190001}, {"name": "Samsung Galaxy S26 Ultra", "brand": "Samsung", "price": 1550000}];
+let selectedBuyProduct = null;
+let buyQuantity = 1;
+
+function formatIQD(value) {
+  return Number(value).toLocaleString('en-US') + ' د.ع';
+}
+function productIcon(brand) {
+  const b=String(brand).toLowerCase();
+  if(b.includes('apple')) return '';
+  if(b.includes('samsung')) return '▣';
+  if(b.includes('xiaomi') || b.includes('poco')) return '◉';
+  if(b.includes('tecno')) return '◈';
+  if(b.includes('realme')) return '◆';
+  return '📱';
+}
+function initBuyBrands() {
+  const el=document.getElementById('buyBrand');
+  if(!el) return;
+  const brands=[...new Set(ALAARAJI_BUY_PRODUCTS.map(p=>p.brand))].sort((a,b)=>a.localeCompare(b));
+  el.innerHTML='<option value="">All brands</option>'+brands.map(b=>`<option value="${escapeAttr(b)}">${escapeHtml(b)}</option>`).join('');
+}
+function getFilteredBuyProducts() {
+  const q=(document.getElementById('buySearch')?.value||'').trim().toLowerCase();
+  const brand=document.getElementById('buyBrand')?.value||'';
+  const sort=document.getElementById('buySort')?.value||'featured';
+  let arr=ALAARAJI_BUY_PRODUCTS.filter(p=>
+    (!brand || p.brand===brand) &&
+    (!q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q))
+  );
+  if(sort==='priceAsc') arr.sort((a,b)=>a.price-b.price);
+  else if(sort==='priceDesc') arr.sort((a,b)=>b.price-a.price);
+  else if(sort==='name') arr.sort((a,b)=>a.name.localeCompare(b.name));
+  return arr;
+}
+function renderBuyProducts() {
+  const grid=document.getElementById('buyProductGrid');
+  const empty=document.getElementById('buyEmpty');
+  const count=document.getElementById('buyResultCount');
+  if(!grid) return;
+  const arr=getFilteredBuyProducts();
+  count.textContent=arr.length+' products';
+  grid.innerHTML=arr.map((p,i)=>`
+    <article class="buy-product-card ${selectedBuyProduct?.name===p.name?'selected':''}" onclick="selectBuyProduct(${JSON.stringify(p.name)})">
+      <div class="buy-brand">${escapeHtml(p.brand)}</div>
+      <div class="buy-device-icon">${escapeHtml(productIcon(p.brand))}</div>
+      <div class="buy-product-name">${escapeHtml(p.name)}</div>
+      <div class="buy-price">${formatIQD(p.price)}</div>
+    </article>`).join('');
+  empty.hidden=arr.length!==0;
+}
+function selectBuyProduct(name) {
+  selectedBuyProduct=ALAARAJI_BUY_PRODUCTS.find(p=>p.name===name)||null;
+  const box=document.getElementById('bookingSelected');
+  if(!selectedBuyProduct) { box.hidden=true; renderBuyProducts(); return; }
+  box.hidden=false;
+  document.getElementById('selectedBuyName').textContent=selectedBuyProduct.name;
+  document.getElementById('selectedBuyBrand').textContent=selectedBuyProduct.brand;
+  document.getElementById('selectedBuyPrice').textContent=formatIQD(selectedBuyProduct.price);
+  renderBuyProducts();
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function clearBuySearch() {
+  const el=document.getElementById('buySearch'); if(el) {el.value=''; renderBuyProducts(); el.focus();}
+}
+function changeBuyQty(delta) {
+  const input=document.getElementById('buyQty');
+  buyQuantity=Math.min(99,Math.max(1,(Number(input.value)||1)+delta));
+  input.value=buyQuantity;
+}
+document.addEventListener('input',e=>{
+  if(e.target?.id==='buyQty') buyQuantity=Math.min(99,Math.max(1,Number(e.target.value)||1));
+});
+function getBookingData() {
+  if(!selectedBuyProduct) {
+    toast('Please choose a product first.');
+    return null;
+  }
+  return {
+    brand:selectedBuyProduct.brand,
+    model:selectedBuyProduct.name,
+    price:selectedBuyProduct.price,
+    priceText:formatIQD(selectedBuyProduct.price),
+    quantity:Math.min(99,Math.max(1,Number(document.getElementById('buyQty')?.value)||1)),
+    request:document.getElementById('buyRequest')?.value||'Buy product'
+  };
+}
+function bookWhatsApp() {
+  const d=getBookingData(); if(!d) return;
+  const total=d.price*d.quantity;
+  whatsapp("Hello Alaaraji Store, I want to "+d.request.toLowerCase()+
+    "\nBrand: "+d.brand+"\nProduct: "+d.model+"\nUnit price: "+d.priceText+
+    "\nQuantity: "+d.quantity+"\nEstimated total: "+formatIQD(total));
+}
+function bookOnline() {
+  const d=getBookingData(); if(!d) return;
+  const total=d.price*d.quantity;
+  toast("Booking prepared: "+d.model+" — "+formatIQD(total));
+}
+document.addEventListener('DOMContentLoaded',()=>{initBuyBrands();renderBuyProducts();});
+</script>
+
+<script id="service-script">
+const ALAARAJI_CATALOG = {"Apple": {"Phones": ["iPhone 7", "iPhone 7 Plus", "iPhone 8", "iPhone 8 Plus", "iPhone X", "iPhone XR", "iPhone XS", "iPhone XS Max", "iPhone 11", "iPhone 11 Pro", "iPhone 11 Pro Max", "iPhone SE (2nd gen)", "iPhone 12 mini", "iPhone 12", "iPhone 12 Pro", "iPhone 12 Pro Max", "iPhone 13 mini", "iPhone 13", "iPhone 13 Pro", "iPhone 13 Pro Max", "iPhone SE (3rd gen)", "iPhone 14", "iPhone 14 Plus", "iPhone 14 Pro", "iPhone 14 Pro Max", "iPhone 15", "iPhone 15 Plus", "iPhone 15 Pro", "iPhone 15 Pro Max", "iPhone 16", "iPhone 16 Plus", "iPhone 16 Pro", "iPhone 16 Pro Max", "iPhone 16e", "iPhone 17", "iPhone 17 Pro", "iPhone 17 Pro Max"], "Tablets": ["iPad (5th–11th gen)", "iPad mini (5th–7th gen)", "iPad Air (3rd–6th gen)", "iPad Pro 11-inch", "iPad Pro 12.9-inch", "iPad Pro 13-inch"]}, "Samsung": {"Phones": ["Galaxy S8", "S8+", "S9", "S9+", "S10", "S10+", "S10e", "S20", "S20+", "S20 Ultra", "S21", "S21+", "S21 Ultra", "S22", "S22+", "S22 Ultra", "S23", "S23+", "S23 Ultra", "S24", "S24+", "S24 Ultra", "S25", "S25+", "S25 Ultra", "S26", "S26+", "S26 Ultra", "Galaxy Note 8", "Note 9", "Note 10", "Note 10+", "Note 20", "Note 20 Ultra", "Galaxy A12", "A13", "A14", "A15", "A16", "A22", "A23", "A24", "A25", "A26", "A32", "A33", "A34", "A35", "A36", "A52", "A53", "A54", "A55", "A56", "A72", "A73", "Galaxy M12", "M13", "M14", "M15", "M23", "M33", "M34", "M35", "M52", "M53", "M54", "M55", "Galaxy Z Fold3", "Z Fold4", "Z Fold5", "Z Fold6", "Z Fold7", "Galaxy Z Flip3", "Z Flip4", "Z Flip5", "Z Flip6", "Z Flip7"], "Tablets": ["Galaxy Tab S6", "Tab S7", "Tab S7+", "Tab S8", "Tab S8+", "Tab S8 Ultra", "Tab S9", "Tab S9+", "Tab S9 Ultra", "Tab S10+", "Tab S10 Ultra", "Tab S11", "Tab S11 Ultra", "Tab A7", "Tab A8", "Tab A9", "Tab A9+"]}, "Xiaomi": {"Phones": ["Xiaomi Mi 10", "Mi 10 Pro", "Mi 11", "Mi 11 Lite", "Mi 11 Ultra", "Xiaomi 12", "12 Pro", "12T", "12T Pro", "Xiaomi 13", "13 Pro", "13T", "13T Pro", "Xiaomi 14", "14 Pro", "14 Ultra", "14T", "14T Pro", "Xiaomi 15", "15 Pro", "15 Ultra", "15T", "Redmi Note 9", "Note 10", "Note 10 Pro", "Note 11", "Note 11 Pro", "Note 12", "Note 12 Pro", "Note 13", "Note 13 Pro", "Note 14", "Note 14 Pro", "Redmi 9", "9A", "9C", "10", "10C", "12C", "13C", "14C", "Redmi A1", "A2", "A3", "A4", "POCO X3", "X3 Pro", "X4 Pro", "X5", "X5 Pro", "X6", "X6 Pro", "X7", "X7 Pro", "POCO F3", "F4", "F5", "F5 Pro", "F6", "F6 Pro", "F7", "F7 Pro"], "Tablets": ["Xiaomi Pad 5", "Pad 6", "Pad 6 Pro", "Pad 6S Pro", "Pad 7", "Pad 7 Pro", "Redmi Pad", "Redmi Pad SE", "Redmi Pad Pro"]}, "TECNO": {"Phones": ["Camon 16", "Camon 17", "Camon 18", "Camon 19", "Camon 20", "Camon 20 Pro", "Camon 30", "Camon 30 Pro", "Camon 40", "Camon 40 Pro", "Phantom X", "Phantom X2", "Phantom X2 Pro", "Phantom V Fold", "Phantom V Fold2", "Phantom V Flip", "Phantom V Flip2", "Spark 6", "Spark 7", "Spark 8", "Spark 9", "Spark 10", "Spark 10 Pro", "Spark 20", "Spark 20 Pro", "Spark 30", "Spark 30 Pro", "Spark 40", "Pova 2", "Pova 3", "Pova 4", "Pova 5", "Pova 6", "Pova 6 Pro", "Pova 7", "Pova 7 Pro"], "Tablets": ["Megapad 10", "Megapad 11", "Megapad SE"]}, "realme": {"Phones": ["realme 6", "6 Pro", "7", "7 Pro", "8", "8 Pro", "9", "9 Pro", "10", "10 Pro", "11", "11 Pro", "12", "12 Pro", "13", "13 Pro", "14", "14 Pro", "GT", "GT 2", "GT 3", "GT 5", "GT 6", "GT 7", "GT Neo 2", "GT Neo 3", "GT Neo 5", "C11", "C21", "C25", "C30", "C31", "C33", "C35", "C51", "C53", "C55", "C61", "C63", "C65", "C67", "C75", "Narzo 50", "Narzo 60", "Narzo 70", "Narzo 80"], "Tablets": ["realme Pad", "Pad Mini", "Pad 2", "Pad X", "Pad 2 Lite"]}, "Huawei": {"Phones": ["P20", "P20 Pro", "P30", "P30 Pro", "P40", "P40 Pro", "P50", "P50 Pro", "P60", "P60 Pro", "Pura 70", "Pura 70 Pro", "Pura 70 Ultra", "Mate 20", "Mate 20 Pro", "Mate 30", "Mate 30 Pro", "Mate 40", "Mate 40 Pro", "Mate 50", "Mate 50 Pro", "Mate 60", "Mate 60 Pro", "Mate 70", "Mate 70 Pro", "nova 5", "nova 7", "nova 8", "nova 9", "nova 10", "nova 11", "nova 12", "nova 13"], "Tablets": ["MatePad 10.4", "MatePad 11", "MatePad 11.5", "MatePad 12.6", "MatePad Pro 10.8", "MatePad Pro 11", "MatePad Pro 12.6", "MatePad Pro 13.2"]}, "Honor": {"Phones": ["Honor 8X", "9X", "10X Lite", "20", "20 Pro", "30", "30 Pro", "50", "50 Lite", "60", "60 Pro", "70", "70 Pro", "80", "80 Pro", "90", "90 Pro", "100", "200", "200 Pro", "Magic3", "Magic4", "Magic5", "Magic6", "Magic7", "Magic V", "Magic V2", "Magic V3", "X7", "X8", "X9", "X9a", "X9b", "X9c", "X10", "X20", "X30", "X40", "X50", "X60"], "Tablets": ["Honor Pad 8", "Pad 9", "MagicPad 13", "MagicPad 2"]}, "OPPO": {"Phones": ["Reno 4", "Reno 5", "Reno 6", "Reno 7", "Reno 8", "Reno 9", "Reno 10", "Reno 11", "Reno 12", "Reno 13", "Find X2", "Find X3", "Find X5", "Find X6", "Find X7", "Find X8", "A15", "A16", "A17", "A18", "A31", "A54", "A57", "A58", "A60", "A78", "A79", "A96", "A98", "F17", "F19", "F21", "F23", "F25"], "Tablets": ["OPPO Pad", "Pad Air", "Pad 2", "Pad 3", "Pad Neo"]}, "vivo": {"Phones": ["V20", "V21", "V23", "V25", "V27", "V29", "V30", "V40", "V50", "V60", "X50", "X60", "X70", "X80", "X90", "X100", "X200", "X Fold", "X Fold2", "X Fold3", "Y20", "Y21", "Y22", "Y33", "Y35", "Y36", "Y50", "Y51", "Y52", "Y55", "Y56", "Y72", "Y73", "Y76", "Y100"], "Tablets": ["vivo Pad", "Pad2", "Pad3", "Pad3 Pro"]}, "OnePlus": {"Phones": ["OnePlus 7", "7T", "8", "8T", "9", "9 Pro", "10 Pro", "10T", "11", "11R", "12", "12R", "13", "13R", "Nord", "Nord 2", "Nord 3", "Nord 4", "Nord CE", "Nord CE 2", "Nord CE 3", "Nord CE 4", "Open"], "Tablets": ["OnePlus Pad", "Pad 2"]}, "Infinix": {"Phones": ["Hot 9", "Hot 10", "Hot 11", "Hot 12", "Hot 20", "Hot 30", "Hot 40", "Hot 50", "Hot 60", "Note 8", "Note 10", "Note 11", "Note 12", "Note 30", "Note 40", "Note 50", "Zero 8", "Zero 20", "Zero 30", "GT 10 Pro", "GT 20 Pro", "GT 30 Pro", "Smart 5", "Smart 6", "Smart 7", "Smart 8", "Smart 9"], "Tablets": ["Xpad", "Xpad GT"]}, "Google": {"Phones": ["Pixel 4", "Pixel 4a", "Pixel 5", "Pixel 5a", "Pixel 6", "Pixel 6 Pro", "Pixel 6a", "Pixel 7", "Pixel 7 Pro", "Pixel 7a", "Pixel 8", "Pixel 8 Pro", "Pixel 8a", "Pixel 9", "Pixel 9 Pro", "Pixel 9 Pro XL", "Pixel 9a", "Pixel 10", "Pixel 10 Pro", "Pixel 10 Pro XL"], "Tablets": ["Pixel Tablet"]}, "Motorola": {"Phones": ["Moto G Power", "Moto G Stylus", "Moto G Play", "Moto G54", "Moto G55", "Moto G75", "Moto G84", "Moto G85", "Moto Edge 20", "Edge 30", "Edge 40", "Edge 50", "Edge 60", "Razr 40", "Razr 40 Ultra", "Razr 50", "Razr 50 Ultra", "Razr 60", "Razr 60 Ultra"], "Tablets": ["Moto Tab G70", "Moto Tab G62", "Moto Tab G84"]}, "Nokia": {"Phones": ["Nokia 2.4", "3.4", "5.4", "6.2", "7.2", "8.3", "G10", "G11", "G20", "G21", "G22", "G42", "G50", "C10", "C20", "C21", "C22", "C32", "C51", "C55", "C61", "X10", "X20", "X30"], "Tablets": ["T10", "T20", "T21"]}, "ASUS": {"Phones": ["ROG Phone 3", "ROG Phone 5", "ROG Phone 6", "ROG Phone 7", "ROG Phone 8", "ROG Phone 9", "Zenfone 8", "Zenfone 9", "Zenfone 10", "Zenfone 11 Ultra"], "Tablets": ["ROG Flow Z13", "ZenPad series"]}, "Sony": {"Phones": ["Xperia 1 II", "Xperia 1 III", "Xperia 1 IV", "Xperia 1 V", "Xperia 1 VI", "Xperia 1 VII", "Xperia 5 II", "Xperia 5 III", "Xperia 5 IV", "Xperia 5 V", "Xperia 10 IV", "Xperia 10 V", "Xperia 10 VI"], "Tablets": ["Xperia Tablet Z", "Xperia Z4 Tablet"]}, "ZTE": {"Phones": ["Axon 20", "Axon 30", "Axon 40", "Axon 50", "Axon 60", "Blade A31", "Blade A51", "Blade A52", "Blade A53", "Blade A54", "Blade A55", "Blade V40"], "Tablets": ["Axon Pad", "Red Magic Gaming Tablet"]}, "Lenovo": {"Phones": ["Legion Phone Duel", "Legion Phone Duel 2", "Legion Y70"], "Tablets": ["Tab M8", "Tab M9", "Tab M10", "Tab P11", "Tab P12", "Legion Tab"]}, "Microsoft": {"Phones": ["Surface Duo", "Surface Duo 2"], "Tablets": ["Surface Go 2", "Surface Go 3", "Surface Go 4", "Surface Pro 7", "Surface Pro 8", "Surface Pro 9", "Surface Pro 10", "Surface Pro 11"]}, "Nothing": {"Phones": ["Nothing Phone (1)", "Nothing Phone (2)", "Nothing Phone (2a)", "Nothing Phone (3)", "CMF Phone 1", "CMF Phone 2 Pro"], "Tablets": []}, "Meizu": {"Phones": ["Meizu 17", "18", "18 Pro", "20", "20 Pro", "21", "21 Pro"], "Tablets": []}, "RedMagic": {"Phones": ["RedMagic 6", "7", "8", "9", "10", "11"], "Tablets": ["RedMagic Nova"]}, "Sharp": {"Phones": ["AQUOS R5G", "R6", "R7", "R8", "R9", "sense5G", "sense6", "sense7", "sense8", "sense9"], "Tablets": []}, "Blackview": {"Phones": ["BV6600", "BV6900", "BV8800", "BV9200", "BV9300", "BV9900"], "Tablets": ["Tab 8", "Tab 9", "Tab 16", "Active 8 Pro"]}, "Doogee": {"Phones": ["S58 Pro", "S88 Pro", "S96 Pro", "S98", "S100", "V20", "V30"], "Tablets": ["T10", "T20", "T30"]}, "Ulefone": {"Phones": ["Armor 9", "Armor 11", "Armor 12", "Armor 17 Pro", "Armor 21", "Armor 24"], "Tablets": ["Armor Pad", "Armor Pad 2"]}};
+const WA_NUMBER = "9647818667474";
+
+function brandNames() { return Object.keys(ALAARAJI_CATALOG); }
+function fillBrandSelect(id) {
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.innerHTML=brandNames().map(b=>`<option value="${escapeAttr(b)}">${escapeHtml(b)}</option>`).join("");
+  fillModels(id,id.replace("Brand","Model"));
+}
+function fillModels(brandId, modelId) {
+  const brand=document.getElementById(brandId).value;
+  const modelEl=document.getElementById(modelId);
+  const groups=ALAARAJI_CATALOG[brand]||{Phones:[],Tablets:[]};
+  const models=[...(groups.Phones||[]),...(groups.Tablets||[])];
+  modelEl.innerHTML=models.map(m=>`<option value="${escapeAttr(m)}">${escapeHtml(m)}</option>`).join("");
+}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+function escapeAttr(v){return escapeHtml(v);}
+function repairWhatsApp(){
+  const b=document.getElementById("repairBrand").value,m=document.getElementById("repairModel").value,p=document.getElementById("repairPart").value,n=document.getElementById("repairNote").value;
+  whatsapp("Hello Alaaraji Store, I need a repair.\nBrand: "+b+"\nModel: "+m+"\nRepair: "+p+"\nProblem: "+n);
+}
+function repairOnline(){
+  const b=document.getElementById("repairBrand").value,m=document.getElementById("repairModel").value,p=document.getElementById("repairPart").value;
+  toast("Repair booking prepared: "+b+" "+m+" — "+p);
+}
+function unlockWhatsApp(){
+  const b=document.getElementById("unlockBrand").value,m=document.getElementById("unlockModel").value,t=document.getElementById("unlockType").value;
+  whatsapp("Hello Alaaraji Store, I need an unlock service.\nBrand: "+b+"\nModel: "+m+"\nService: "+t);
+}
+function unlockOnline(){
+  const b=document.getElementById("unlockBrand").value,m=document.getElementById("unlockModel").value,t=document.getElementById("unlockType").value;
+  toast("Unlock request prepared: "+b+" "+m+" — "+t);
+}
+["repairBrand","unlockBrand"].forEach(fillBrandSelect);
+
+/* ===== ALAARAJI MULTI-LANGUAGE FIX ===== */
+const ALAARAJI_I18N = {
+  EN:{dir:'ltr', 'Book':'Book','Repair':'Repair','Unlock':'Unlock','Premium Technology Store':'Premium Technology Store','Phones • Tablets • Accessories • Technology • Repair':'Phones • Tablets • Accessories • Technology • Repair','START / ابدأ':'START','EXPLORE STORE':'EXPLORE STORE','Featured Technology':'Featured Technology','A professional store area ready for your real products.':'A professional store area ready for your real products.','STORE SERVICES':'STORE SERVICES','Book or Buy a Product':'Book or Buy a Product','Choose your brand and model, then book online or contact Alaaraji Store directly on WhatsApp.':'Choose your brand and model, then book online or contact Alaaraji Store directly on WhatsApp.','Brand':'Brand','Model':'Model','Request':'Request','Buy product':'Buy product','Book product':'Book product','Ask about availability':'Ask about availability','Book Online':'Book Online','Book on WhatsApp':'Book on WhatsApp','Call +964 781 866 7474':'Call +964 781 866 7474','REPAIR CENTER':'REPAIR CENTER','Repair Your Product':'Repair Your Product','Select the brand, model and the component you want repaired or replaced.':'Select the brand, model and the component you want repaired or replaced.','What do you want to repair?':'What do you want to repair?','Screen / Display':'Screen / Display','Back Cover':'Back Cover','Headset / Earpiece':'Headset / Earpiece','Microphone':'Microphone','Charging Port':'Charging Port','Battery':'Battery','Camera':'Camera','Speaker':'Speaker','Power Button':'Power Button','Volume Buttons':'Volume Buttons','Other':'Other','Describe the problem (optional)':'Describe the problem (optional)','Tell us what happened to the device...':'Tell us what happened to the device...','Book Repair Online':'Book Repair Online','Send Repair Request on WhatsApp':'Send Repair Request on WhatsApp','Call Repair Center':'Call Repair Center','DEVICE SERVICES':'DEVICE SERVICES','Unlock Your Product':'Unlock Your Product','Choose the manufacturer and model to request an eligible unlocking service.':'Choose the manufacturer and model to request an eligible unlocking service.','Service':'Service','Network / Carrier Unlock':'Network / Carrier Unlock','SIM Unlock':'SIM Unlock','Screen Lock Assistance':'Screen Lock Assistance','FRP Unlock':'FRP Unlock','Account/Activation Service — eligibility check':'Account/Activation Service — eligibility check','Other Unlock Service':'Other Unlock Service','Request Unlock Online':'Request Unlock Online','Request Unlock on WhatsApp':'Request Unlock on WhatsApp','Call +964 781 866 7474':'Call +964 781 866 7474','Unlocking is subject to device, carrier, account and legal eligibility. The store can verify the model before accepting the request.':'Unlocking is subject to device, carrier, account and legal eligibility. The store can verify the model before accepting the request.','Choose Language':'Choose Language','Sign in / Sign up':'Sign in / Sign up','Choose a sign-in method.':'Choose a sign-in method.','Email':'Email','Phone':'Phone','Your Cart':'Your Cart','Total items:':'Total items:','Secure Checkout':'Secure Checkout','Cart:':'Cart:','items':'items','WhatsApp:':'WhatsApp:','calling opens the phone dialer directly.':'calling opens the phone dialer directly.','© 2026 Alaaraji Store — الاعرجي ستور':'© 2026 Alaaraji Store — الاعرجي ستور'},
+  AR:{dir:'rtl','Book':'حجز','Repair':'الصيانة','Unlock':'إزالة القفل','Premium Technology Store':'متجر تقنية مميز','Phones • Tablets • Accessories • Technology • Repair':'هواتف • أجهزة لوحية • إكسسوارات • تقنية • صيانة','START / ابدأ':'ابدأ','EXPLORE STORE':'استكشف المتجر','Featured Technology':'منتجات تقنية مميزة','A professional store area ready for your real products.':'قسم متجر احترافي جاهز لعرض منتجاتك الحقيقية.','STORE SERVICES':'خدمات المتجر','Book or Buy a Product':'حجز أو شراء منتج','Choose your brand and model, then book online or contact Alaaraji Store directly on WhatsApp.':'اختر الماركة والموديل، ثم احجز إلكترونياً أو تواصل مع الاعرجي ستور مباشرة عبر واتساب.','Brand':'الماركة','Model':'الموديل','Request':'الطلب','Buy product':'شراء المنتج','Book product':'حجز المنتج','Ask about availability':'الاستفسار عن التوفر','Book Online':'حجز أونلاين','Book on WhatsApp':'الحجز عبر واتساب','Call +964 781 866 7474':'اتصال +964 781 866 7474','REPAIR CENTER':'مركز الصيانة','Repair Your Product':'صيانة جهازك','Select the brand, model and the component you want repaired or replaced.':'اختر الماركة والموديل والقطعة التي تريد إصلاحها أو استبدالها.','What do you want to repair?':'ماذا تريد أن تصلح؟','Screen / Display':'الشاشة / العرض','Back Cover':'الغطاء الخلفي','Headset / Earpiece':'سماعة المكالمات','Microphone':'المايكروفون','Charging Port':'منفذ الشحن','Battery':'البطارية','Camera':'الكاميرا','Speaker':'السماعة الخارجية','Power Button':'زر التشغيل','Volume Buttons':'أزرار الصوت','Other':'أخرى','Describe the problem (optional)':'وصف المشكلة (اختياري)','Tell us what happened to the device...':'اكتب لنا ما الذي حدث للجهاز...','Book Repair Online':'حجز صيانة أونلاين','Send Repair Request on WhatsApp':'إرسال طلب صيانة عبر واتساب','Call Repair Center':'اتصال بمركز الصيانة','DEVICE SERVICES':'خدمات الأجهزة','Unlock Your Product':'إزالة الرمز أو القفل','Choose the manufacturer and model to request an eligible unlocking service.':'اختر الماركة والموديل لطلب خدمة إزالة الرمز أو القفل المناسبة.','Service':'الخدمة','Network / Carrier Unlock':'فتح قفل الشبكة / شركة الاتصالات','SIM Unlock':'فتح قفل الشريحة','Screen Lock Assistance':'المساعدة في إزالة قفل الشاشة','FRP Unlock':'إزالة قفل FRP','Account/Activation Service — eligibility check':'خدمة الحساب / التفعيل — فحص الأهلية','Other Unlock Service':'خدمة إزالة قفل أخرى','Request Unlock Online':'طلب إزالة القفل أونلاين','Request Unlock on WhatsApp':'طلب إزالة القفل عبر واتساب','Unlocking is subject to device, carrier, account and legal eligibility. The store can verify the model before accepting the request.':'تخضع خدمة إزالة القفل لأهلية الجهاز والشبكة والحساب والأنظمة المعمول بها. يمكن للمتجر التحقق من الموديل قبل قبول الطلب.','Choose Language':'اختر اللغة','Sign in / Sign up':'تسجيل الدخول / إنشاء حساب','Choose a sign-in method.':'اختر طريقة تسجيل الدخول.','Your Cart':'سلة التسوق','Total items:':'إجمالي القطع:','Secure Checkout':'الدفع الآمن','Cart:':'السلة:','items':'قطعة','WhatsApp:':'واتساب:','calling opens the phone dialer directly.':'الاتصال يفتح تطبيق الهاتف مباشرة.','© 2026 Alaaraji Store — الاعرجي ستور':'© 2026 الاعرجي ستور — Alaaraji Store'},
+  ES:{dir:'ltr',Book:'Reservar',Repair:'Reparar',Unlock:'Desbloquear','Premium Technology Store':'Tienda de tecnología premium','Phones • Tablets • Accessories • Technology • Repair':'Teléfonos • Tablets • Accesorios • Tecnología • Reparación','START / ابدأ':'EMPEZAR','EXPLORE STORE':'EXPLORAR TIENDA','Featured Technology':'Tecnología destacada','STORE SERVICES':'SERVICIOS DE LA TIENDA','Book or Buy a Product':'Reservar o comprar un producto','Brand':'Marca','Model':'Modelo','Request':'Solicitud','Buy product':'Comprar producto','Book product':'Reservar producto','Ask about availability':'Consultar disponibilidad','Book Online':'Reservar online','Book on WhatsApp':'Reservar por WhatsApp','REPAIR CENTER':'CENTRO DE REPARACIÓN','Repair Your Product':'Repara tu producto','What do you want to repair?':'¿Qué quieres reparar?','Screen / Display':'Pantalla / Display','Back Cover':'Tapa trasera','Charging Port':'Puerto de carga','Battery':'Batería','Camera':'Cámara','Speaker':'Altavoz','Power Button':'Botón de encendido','Volume Buttons':'Botones de volumen','Other':'Otro','Describe the problem (optional)':'Describe el problema (opcional)','Book Repair Online':'Reservar reparación online','Send Repair Request on WhatsApp':'Enviar solicitud de reparación por WhatsApp','Call Repair Center':'Llamar al centro de reparación','DEVICE SERVICES':'SERVICIOS DEL DISPOSITIVO','Unlock Your Product':'Desbloquear tu dispositivo','Service':'Servicio','Network / Carrier Unlock':'Desbloqueo de red / operador','SIM Unlock':'Desbloqueo SIM','Screen Lock Assistance':'Asistencia para bloqueo de pantalla','FRP Unlock':'Desbloqueo FRP','Other Unlock Service':'Otro servicio de desbloqueo','Request Unlock Online':'Solicitar desbloqueo online','Request Unlock on WhatsApp':'Solicitar desbloqueo por WhatsApp','Choose Language':'Elegir idioma','Sign in / Sign up':'Iniciar sesión / Registrarse','Your Cart':'Tu carrito','Secure Checkout':'Pago seguro'},
+  FR:{dir:'ltr',Book:'Réserver',Repair:'Réparer',Unlock:'Déverrouiller','Premium Technology Store':'Boutique technologique premium','Phones • Tablets • Accessories • Technology • Repair':'Téléphones • Tablettes • Accessoires • Technologie • Réparation','START / ابدأ':'COMMENCER','EXPLORE STORE':'EXPLORER LA BOUTIQUE','Featured Technology':'Technologie à la une','STORE SERVICES':'SERVICES DE LA BOUTIQUE','Book or Buy a Product':'Réserver ou acheter un produit','Brand':'Marque','Model':'Modèle','Request':'Demande','Buy product':'Acheter le produit','Book product':'Réserver le produit','Ask about availability':'Demander la disponibilité','Book Online':'Réserver en ligne','Book on WhatsApp':'Réserver sur WhatsApp','REPAIR CENTER':'CENTRE DE RÉPARATION','Repair Your Product':'Réparer votre produit','What do you want to repair?':'Que voulez-vous réparer ?','Screen / Display':'Écran / affichage','Back Cover':'Coque arrière','Charging Port':'Port de charge','Battery':'Batterie','Camera':'Caméra','Speaker':'Haut-parleur','Power Button':'Bouton d’alimentation','Volume Buttons':'Boutons de volume','Other':'Autre','Describe the problem (optional)':'Décrire le problème (facultatif)','Book Repair Online':'Réserver une réparation en ligne','Send Repair Request on WhatsApp':'Envoyer une demande via WhatsApp','Call Repair Center':'Appeler le centre de réparation','DEVICE SERVICES':'SERVICES DE L’APPAREIL','Unlock Your Product':'Déverrouiller votre appareil','Service':'Service','Network / Carrier Unlock':'Déverrouillage réseau / opérateur','SIM Unlock':'Déverrouillage SIM','Screen Lock Assistance':'Assistance au verrouillage écran','FRP Unlock':'Déverrouillage FRP','Other Unlock Service':'Autre service de déverrouillage','Request Unlock Online':'Demander le déverrouillage en ligne','Request Unlock on WhatsApp':'Demander le déverrouillage sur WhatsApp','Choose Language':'Choisir la langue','Sign in / Sign up':'Connexion / Inscription','Your Cart':'Votre panier','Secure Checkout':'Paiement sécurisé'},
+  DE:{dir:'ltr',Book:'Buchen',Repair:'Reparatur',Unlock:'Entsperren','Premium Technology Store':'Premium-Technikgeschäft','Phones • Tablets • Accessories • Technology • Repair':'Handys • Tablets • Zubehör • Technik • Reparatur','START / ابدأ':'START','EXPLORE STORE':'SHOP ENTDECKEN','Featured Technology':'Top-Technologie','STORE SERVICES':'SHOP-SERVICES','Book or Buy a Product':'Produkt buchen oder kaufen','Brand':'Marke','Model':'Modell','Request':'Anfrage','Buy product':'Produkt kaufen','Book product':'Produkt buchen','Ask about availability':'Verfügbarkeit anfragen','Book Online':'Online buchen','Book on WhatsApp':'Über WhatsApp buchen','REPAIR CENTER':'REPARATURZENTRUM','Repair Your Product':'Gerät reparieren','What do you want to repair?':'Was möchten Sie reparieren?','Screen / Display':'Display / Bildschirm','Back Cover':'Rückseite','Charging Port':'Ladeanschluss','Battery':'Akku','Camera':'Kamera','Speaker':'Lautsprecher','Power Button':'Ein-/Aus-Taste','Volume Buttons':'Lautstärketasten','Other':'Sonstiges','Describe the problem (optional)':'Problem beschreiben (optional)','Book Repair Online':'Reparatur online buchen','Send Repair Request on WhatsApp':'Reparaturanfrage über WhatsApp senden','Call Repair Center':'Reparaturzentrum anrufen','DEVICE SERVICES':'GERÄTESERVICES','Unlock Your Product':'Gerät entsperren','Service':'Service','Network / Carrier Unlock':'Netz-/Provider-Entsperrung','SIM Unlock':'SIM-Entsperrung','Screen Lock Assistance':'Hilfe bei Bildschirmsperre','FRP Unlock':'FRP-Entsperrung','Other Unlock Service':'Weitere Entsperrung','Request Unlock Online':'Entsperrung online anfragen','Request Unlock on WhatsApp':'Entsperrung über WhatsApp anfragen','Choose Language':'Sprache wählen','Sign in / Sign up':'Anmelden / Registrieren','Your Cart':'Warenkorb','Secure Checkout':'Sicher bezahlen'},
+  ZH:{dir:'ltr',Book:'预约',Repair:'维修',Unlock:'解锁','Premium Technology Store':'高端科技商店','Phones • Tablets • Accessories • Technology • Repair':'手机 • 平板 • 配件 • 科技 • 维修','START / ابدأ':'开始','EXPLORE STORE':'探索商店','Featured Technology':'精选科技产品','STORE SERVICES':'商店服务','Book or Buy a Product':'预约或购买产品','Brand':'品牌','Model':'型号','Request':'请求','Buy product':'购买产品','Book product':'预约产品','Ask about availability':'询问库存','Book Online':'在线预约','Book on WhatsApp':'通过 WhatsApp 预约','REPAIR CENTER':'维修中心','Repair Your Product':'维修您的设备','What do you want to repair?':'您要维修什么？','Screen / Display':'屏幕 / 显示','Back Cover':'后盖','Charging Port':'充电口','Battery':'电池','Camera':'摄像头','Speaker':'扬声器','Power Button':'电源键','Volume Buttons':'音量键','Other':'其他','Describe the problem (optional)':'描述问题（可选）','Book Repair Online':'在线预约维修','Send Repair Request on WhatsApp':'通过 WhatsApp 发送维修请求','Call Repair Center':'致电维修中心','DEVICE SERVICES':'设备服务','Unlock Your Product':'解锁您的设备','Service':'服务','Network / Carrier Unlock':'网络 / 运营商解锁','SIM Unlock':'SIM 卡解锁','Screen Lock Assistance':'屏幕锁帮助','FRP Unlock':'FRP 解锁','Other Unlock Service':'其他解锁服务','Request Unlock Online':'在线申请解锁','Request Unlock on WhatsApp':'通过 WhatsApp 申请解锁','Choose Language':'选择语言','Sign in / Sign up':'登录 / 注册','Your Cart':'购物车','Secure Checkout':'安全结账'},
+  HI:{dir:'ltr',Book:'बुक करें',Repair:'मरम्मत',Unlock:'अनलॉक','Premium Technology Store':'प्रीमियम टेक्नोलॉजी स्टोर','Phones • Tablets • Accessories • Technology • Repair':'फोन • टैबलेट • एक्सेसरीज़ • तकनीक • मरम्मत','START / ابدأ':'शुरू करें','EXPLORE STORE':'स्टोर देखें','Featured Technology':'विशेष तकनीक','STORE SERVICES':'स्टोर सेवाएँ','Book or Buy a Product':'उत्पाद बुक या खरीदें','Brand':'ब्रांड','Model':'मॉडल','Request':'अनुरोध','Buy product':'उत्पाद खरीदें','Book product':'उत्पाद बुक करें','Ask about availability':'उपलब्धता पूछें','Book Online':'ऑनलाइन बुक करें','Book on WhatsApp':'WhatsApp पर बुक करें','REPAIR CENTER':'रिपेयर सेंटर','Repair Your Product':'अपने उत्पाद की मरम्मत','What do you want to repair?':'क्या मरम्मत करनी है?','Screen / Display':'स्क्रीन / डिस्प्ले','Back Cover':'बैक कवर','Charging Port':'चार्जिंग पोर्ट','Battery':'बैटरी','Camera':'कैमरा','Speaker':'स्पीकर','Power Button':'पावर बटन','Volume Buttons':'वॉल्यूम बटन','Other':'अन्य','Describe the problem (optional)':'समस्या बताएं (वैकल्पिक)','Book Repair Online':'ऑनलाइन रिपेयर बुक करें','Send Repair Request on WhatsApp':'WhatsApp पर रिपेयर अनुरोध भेजें','Call Repair Center':'रिपेयर सेंटर कॉल करें','DEVICE SERVICES':'डिवाइस सेवाएँ','Unlock Your Product':'अपने डिवाइस को अनलॉक करें','Service':'सेवा','Network / Carrier Unlock':'नेटवर्क / कैरियर अनलॉक','SIM Unlock':'SIM अनलॉक','Screen Lock Assistance':'स्क्रीन लॉक सहायता','FRP Unlock':'FRP अनलॉक','Other Unlock Service':'अन्य अनलॉक सेवा','Request Unlock Online':'ऑनलाइन अनलॉक अनुरोध','Request Unlock on WhatsApp':'WhatsApp पर अनलॉक अनुरोध','Choose Language':'भाषा चुनें','Sign in / Sign up':'साइन इन / साइन अप','Your Cart':'कार्ट','Secure Checkout':'सुरक्षित भुगतान'},
+  PT:{dir:'ltr',Book:'Reservar',Repair:'Reparar',Unlock:'Desbloquear','Premium Technology Store':'Loja de tecnologia premium','Phones • Tablets • Accessories • Technology • Repair':'Telefones • Tablets • Acessórios • Tecnologia • Reparação','START / ابدأ':'COMEÇAR','EXPLORE STORE':'EXPLORAR LOJA','Featured Technology':'Tecnologia em destaque','STORE SERVICES':'SERVIÇOS DA LOJA','Book or Buy a Product':'Reservar ou comprar um produto','Brand':'Marca','Model':'Modelo','Request':'Pedido','Buy product':'Comprar produto','Book product':'Reservar produto','Ask about availability':'Perguntar disponibilidade','Book Online':'Reservar online','Book on WhatsApp':'Reservar no WhatsApp','REPAIR CENTER':'CENTRO DE REPARAÇÃO','Repair Your Product':'Reparar o seu produto','What do you want to repair?':'O que deseja reparar?','Screen / Display':'Ecrã / Display','Back Cover':'Tampa traseira','Charging Port':'Porta de carregamento','Battery':'Bateria','Camera':'Câmara','Speaker':'Altifalante','Power Button':'Botão de energia','Volume Buttons':'Botões de volume','Other':'Outro','Describe the problem (optional)':'Descreva o problema (opcional)','Book Repair Online':'Agendar reparação online','Send Repair Request on WhatsApp':'Enviar pedido de reparação no WhatsApp','Call Repair Center':'Ligar para o centro de reparação','DEVICE SERVICES':'SERVIÇOS DO DISPOSITIVO','Unlock Your Product':'Desbloquear o seu dispositivo','Service':'Serviço','Network / Carrier Unlock':'Desbloqueio de rede / operadora','SIM Unlock':'Desbloqueio SIM','Screen Lock Assistance':'Ajuda com bloqueio de ecrã','FRP Unlock':'Desbloqueio FRP','Other Unlock Service':'Outro serviço de desbloqueio','Request Unlock Online':'Pedir desbloqueio online','Request Unlock on WhatsApp':'Pedir desbloqueio no WhatsApp','Choose Language':'Escolher idioma','Sign in / Sign up':'Entrar / Registar','Your Cart':'Carrinho','Secure Checkout':'Pagamento seguro'},
+  RU:{dir:'ltr',Book:'Бронирование',Repair:'Ремонт',Unlock:'Разблокировка','Premium Technology Store':'Премиум магазин технологий','Phones • Tablets • Accessories • Technology • Repair':'Телефоны • Планшеты • Аксессуары • Технологии • Ремонт','START / ابدأ':'НАЧАТЬ','EXPLORE STORE':'ОТКРЫТЬ МАГАЗИН','Featured Technology':'Избранные технологии','STORE SERVICES':'УСЛУГИ МАГАЗИНА','Book or Buy a Product':'Забронировать или купить товар','Brand':'Бренд','Model':'Модель','Request':'Запрос','Buy product':'Купить товар','Book product':'Забронировать товар','Ask about availability':'Узнать наличие','Book Online':'Забронировать онлайн','Book on WhatsApp':'Забронировать в WhatsApp','REPAIR CENTER':'ЦЕНТР РЕМОНТА','Repair Your Product':'Ремонт устройства','What do you want to repair?':'Что нужно отремонтировать?','Screen / Display':'Экран / дисплей','Back Cover':'Задняя крышка','Charging Port':'Разъём зарядки','Battery':'Аккумулятор','Camera':'Камера','Speaker':'Динамик','Power Button':'Кнопка питания','Volume Buttons':'Кнопки громкости','Other':'Другое','Describe the problem (optional)':'Опишите проблему (необязательно)','Book Repair Online':'Записаться на ремонт онлайн','Send Repair Request on WhatsApp':'Отправить запрос на ремонт в WhatsApp','Call Repair Center':'Позвонить в сервисный центр','DEVICE SERVICES':'УСЛУГИ УСТРОЙСТВ','Unlock Your Product':'Разблокировать устройство','Service':'Услуга','Network / Carrier Unlock':'Разблокировка сети / оператора','SIM Unlock':'Разблокировка SIM','Screen Lock Assistance':'Помощь с блокировкой экрана','FRP Unlock':'Разблокировка FRP','Other Unlock Service':'Другая услуга разблокировки','Request Unlock Online':'Запросить разблокировку онлайн','Request Unlock on WhatsApp':'Запросить разблокировку в WhatsApp','Choose Language':'Выберите язык','Sign in / Sign up':'Войти / Регистрация','Your Cart':'Корзина','Secure Checkout':'Безопасная оплата'},
+  JA:{dir:'ltr',Book:'予約',Repair:'修理',Unlock:'ロック解除','Premium Technology Store':'プレミアムテクノロジーストア','Phones • Tablets • Accessories • Technology • Repair':'スマートフォン • タブレット • アクセサリー • テクノロジー • 修理','START / ابدأ':'開始','EXPLORE STORE':'ストアを見る','Featured Technology':'注目のテクノロジー','STORE SERVICES':'ストアサービス','Book or Buy a Product':'商品を予約または購入','Brand':'ブランド','Model':'モデル','Request':'リクエスト','Buy product':'商品を購入','Book product':'商品を予約','Ask about availability':'在庫を確認','Book Online':'オンライン予約','Book on WhatsApp':'WhatsAppで予約','REPAIR CENTER':'修理センター','Repair Your Product':'製品を修理','What do you want to repair?':'何を修理しますか？','Screen / Display':'画面 / ディスプレイ','Back Cover':'背面カバー','Charging Port':'充電ポート','Battery':'バッテリー','Camera':'カメラ','Speaker':'スピーカー','Power Button':'電源ボタン','Volume Buttons':'音量ボタン','Other':'その他','Describe the problem (optional)':'問題を説明（任意）','Book Repair Online':'オンライン修理予約','Send Repair Request on WhatsApp':'WhatsAppで修理依頼','Call Repair Center':'修理センターに電話','DEVICE SERVICES':'デバイスサービス','Unlock Your Product':'デバイスのロック解除','Service':'サービス','Network / Carrier Unlock':'ネットワーク / キャリア解除','SIM Unlock':'SIMロック解除','Screen Lock Assistance':'画面ロックのサポート','FRP Unlock':'FRPロック解除','Other Unlock Service':'その他のロック解除','Request Unlock Online':'オンラインで解除を依頼','Request Unlock on WhatsApp':'WhatsAppで解除を依頼','Choose Language':'言語を選択','Sign in / Sign up':'ログイン / 登録','Your Cart':'カート','Secure Checkout':'安全なチェックアウト'},
+  KO:{dir:'ltr',Book:'예약',Repair:'수리',Unlock:'잠금 해제','Premium Technology Store':'프리미엄 기술 매장','Phones • Tablets • Accessories • Technology • Repair':'휴대폰 • 태블릿 • 액세서리 • 기술 • 수리','START / ابدأ':'시작','EXPLORE STORE':'스토어 둘러보기','Featured Technology':'추천 기술 제품','STORE SERVICES':'매장 서비스','Book or Buy a Product':'제품 예약 또는 구매','Brand':'브랜드','Model':'모델','Request':'요청','Buy product':'제품 구매','Book product':'제품 예약','Ask about availability':'재고 문의','Book Online':'온라인 예약','Book on WhatsApp':'WhatsApp으로 예약','REPAIR CENTER':'수리 센터','Repair Your Product':'제품 수리','What do you want to repair?':'무엇을 수리하시겠습니까?','Screen / Display':'화면 / 디스플레이','Back Cover':'후면 커버','Charging Port':'충전 포트','Battery':'배터리','Camera':'카메라','Speaker':'스피커','Power Button':'전원 버튼','Volume Buttons':'볼륨 버튼','Other':'기타','Describe the problem (optional)':'문제 설명 (선택)','Book Repair Online':'온라인 수리 예약','Send Repair Request on WhatsApp':'WhatsApp으로 수리 요청','Call Repair Center':'수리 센터 전화','DEVICE SERVICES':'기기 서비스','Unlock Your Product':'기기 잠금 해제','Service':'서비스','Network / Carrier Unlock':'네트워크 / 통신사 잠금 해제','SIM Unlock':'SIM 잠금 해제','Screen Lock Assistance':'화면 잠금 지원','FRP Unlock':'FRP 잠금 해제','Other Unlock Service':'기타 잠금 해제 서비스','Request Unlock Online':'온라인 잠금 해제 요청','Request Unlock on WhatsApp':'WhatsApp 잠금 해제 요청','Choose Language':'언어 선택','Sign in / Sign up':'로그인 / 회원가입','Your Cart':'장바구니','Secure Checkout':'안전한 결제'},
+  TR:{dir:'ltr',Book:'Rezervasyon',Repair:'Tamir',Unlock:'Kilidi Aç','Premium Technology Store':'Premium Teknoloji Mağazası','Phones • Tablets • Accessories • Technology • Repair':'Telefonlar • Tabletler • Aksesuarlar • Teknoloji • Tamir','START / ابدأ':'BAŞLA','EXPLORE STORE':'MAĞAZAYI KEŞFET','Featured Technology':'Öne Çıkan Teknoloji','STORE SERVICES':'MAĞAZA HİZMETLERİ','Book or Buy a Product':'Ürün Rezerve Et veya Satın Al','Brand':'Marka','Model':'Model','Request':'Talep','Buy product':'Ürün satın al','Book product':'Ürün rezerve et','Ask about availability':'Stok sor','Book Online':'Online rezervasyon','Book on WhatsApp':'WhatsApp ile rezerve et','REPAIR CENTER':'TAMİR MERKEZİ','Repair Your Product':'Ürününüzü Tamir Ettirin','What do you want to repair?':'Neyi tamir etmek istiyorsunuz?','Screen / Display':'Ekran / Görüntü','Back Cover':'Arka kapak','Charging Port':'Şarj portu','Battery':'Batarya','Camera':'Kamera','Speaker':'Hoparlör','Power Button':'Güç düğmesi','Volume Buttons':'Ses düğmeleri','Other':'Diğer','Describe the problem (optional)':'Sorunu açıklayın (isteğe bağlı)','Book Repair Online':'Online tamir rezervasyonu','Send Repair Request on WhatsApp':'WhatsApp ile tamir talebi gönder','Call Repair Center':'Tamir merkezini ara','DEVICE SERVICES':'CİHAZ HİZMETLERİ','Unlock Your Product':'Cihazınızın Kilidini Açın','Service':'Hizmet','Network / Carrier Unlock':'Şebeke / operatör kilidi açma','SIM Unlock':'SIM kilidi açma','Screen Lock Assistance':'Ekran kilidi desteği','FRP Unlock':'FRP kilidi açma','Other Unlock Service':'Diğer kilit açma hizmeti','Request Unlock Online':'Online kilit açma talebi','Request Unlock on WhatsApp':'WhatsApp ile kilit açma talebi','Choose Language':'Dil seçin','Sign in / Sign up':'Giriş / Kayıt','Your Cart':'Sepetiniz','Secure Checkout':'Güvenli ödeme'},
+  IT:{dir:'ltr',Book:'Prenota',Repair:'Ripara',Unlock:'Sblocca','Premium Technology Store':'Negozio di tecnologia premium','Phones • Tablets • Accessories • Technology • Repair':'Telefoni • Tablet • Accessori • Tecnologia • Riparazione','START / ابدأ':'INIZIA','EXPLORE STORE':'ESPLORA IL NEGOZIO','Featured Technology':'Tecnologia in evidenza','STORE SERVICES':'SERVIZI DEL NEGOZIO','Book or Buy a Product':'Prenota o acquista un prodotto','Brand':'Marca','Model':'Modello','Request':'Richiesta','Buy product':'Acquista prodotto','Book product':'Prenota prodotto','Ask about availability':'Chiedi disponibilità','Book Online':'Prenota online','Book on WhatsApp':'Prenota su WhatsApp','REPAIR CENTER':'CENTRO RIPARAZIONI','Repair Your Product':'Ripara il tuo prodotto','What do you want to repair?':'Cosa vuoi riparare?','Screen / Display':'Schermo / Display','Back Cover':'Cover posteriore','Charging Port':'Porta di ricarica','Battery':'Batteria','Camera':'Fotocamera','Speaker':'Altoparlante','Power Button':'Tasto di accensione','Volume Buttons':'Tasti volume','Other':'Altro','Describe the problem (optional)':'Descrivi il problema (facoltativo)','Book Repair Online':'Prenota riparazione online','Send Repair Request on WhatsApp':'Invia richiesta di riparazione su WhatsApp','Call Repair Center':'Chiama il centro riparazioni','DEVICE SERVICES':'SERVIZI DISPOSITIVO','Unlock Your Product':'Sblocca il tuo dispositivo','Service':'Servizio','Network / Carrier Unlock':'Sblocco rete / operatore','SIM Unlock':'Sblocco SIM','Screen Lock Assistance':'Assistenza blocco schermo','FRP Unlock':'Sblocco FRP','Other Unlock Service':'Altro servizio di sblocco','Request Unlock Online':'Richiedi sblocco online','Request Unlock on WhatsApp':'Richiedi sblocco su WhatsApp','Choose Language':'Scegli lingua','Sign in / Sign up':'Accedi / Registrati','Your Cart':'Carrello','Secure Checkout':'Pagamento sicuro'},
+  ID:{dir:'ltr',Book:'Pesan',Repair:'Perbaikan',Unlock:'Buka Kunci','Premium Technology Store':'Toko Teknologi Premium','Phones • Tablets • Accessories • Technology • Repair':'Ponsel • Tablet • Aksesori • Teknologi • Perbaikan','START / ابدأ':'MULAI','EXPLORE STORE':'JELAJAHI TOKO','Featured Technology':'Teknologi Unggulan','STORE SERVICES':'LAYANAN TOKO','Book or Buy a Product':'Pesan atau Beli Produk','Brand':'Merek','Model':'Model','Request':'Permintaan','Buy product':'Beli produk','Book product':'Pesan produk','Ask about availability':'Tanya ketersediaan','Book Online':'Pesan Online','Book on WhatsApp':'Pesan via WhatsApp','REPAIR CENTER':'PUSAT PERBAIKAN','Repair Your Product':'Perbaiki Produk Anda','What do you want to repair?':'Apa yang ingin diperbaiki?','Screen / Display':'Layar / Display','Back Cover':'Penutup belakang','Charging Port':'Port pengisian','Battery':'Baterai','Camera':'Kamera','Speaker':'Speaker','Power Button':'Tombol daya','Volume Buttons':'Tombol volume','Other':'Lainnya','Describe the problem (optional)':'Jelaskan masalah (opsional)','Book Repair Online':'Pesan perbaikan online','Send Repair Request on WhatsApp':'Kirim permintaan perbaikan di WhatsApp','Call Repair Center':'Hubungi pusat perbaikan','DEVICE SERVICES':'LAYANAN PERANGKAT','Unlock Your Product':'Buka Kunci Perangkat Anda','Service':'Layanan','Network / Carrier Unlock':'Buka kunci jaringan / operator','SIM Unlock':'Buka kunci SIM','Screen Lock Assistance':'Bantuan kunci layar','FRP Unlock':'Buka kunci FRP','Other Unlock Service':'Layanan buka kunci lainnya','Request Unlock Online':'Minta buka kunci online','Request Unlock on WhatsApp':'Minta buka kunci via WhatsApp','Choose Language':'Pilih bahasa','Sign in / Sign up':'Masuk / Daftar','Your Cart':'Keranjang','Secure Checkout':'Pembayaran aman'},
+  UR:{dir:'rtl',Book:'بکنگ',Repair:'مرمت',Unlock:'ان لاک','Premium Technology Store':'پریمیم ٹیکنالوجی اسٹور','Phones • Tablets • Accessories • Technology • Repair':'فون • ٹیبلٹس • لوازمات • ٹیکنالوجی • مرمت','START / ابدأ':'شروع کریں','EXPLORE STORE':'اسٹور دیکھیں','Featured Technology':'نمایاں ٹیکنالوجی','STORE SERVICES':'اسٹور سروسز','Book or Buy a Product':'پروڈکٹ بک یا خریدیں','Brand':'برانڈ','Model':'ماڈل','Request':'درخواست','Buy product':'پروڈکٹ خریدیں','Book product':'پروڈکٹ بک کریں','Ask about availability':'دستیابی پوچھیں','Book Online':'آن لائن بک کریں','Book on WhatsApp':'واٹس ایپ پر بک کریں','REPAIR CENTER':'مرمت مرکز','Repair Your Product':'اپنے ڈیوائس کی مرمت','What do you want to repair?':'کیا مرمت کرنا چاہتے ہیں؟','Screen / Display':'اسکرین / ڈسپلے','Back Cover':'بیک کور','Charging Port':'چارجنگ پورٹ','Battery':'بیٹری','Camera':'کیمرہ','Speaker':'اسپیکر','Power Button':'پاور بٹن','Volume Buttons':'والیوم بٹن','Other':'دیگر','Describe the problem (optional)':'مسئلہ بیان کریں (اختیاری)','Book Repair Online':'آن لائن مرمت بک کریں','Send Repair Request on WhatsApp':'واٹس ایپ پر مرمت کی درخواست بھیجیں','Call Repair Center':'مرمت مرکز کو کال کریں','DEVICE SERVICES':'ڈیوائس سروسز','Unlock Your Product':'ڈیوائس کا کوڈ یا لاک ہٹائیں','Service':'سروس','Network / Carrier Unlock':'نیٹ ورک / کیریئر ان لاک','SIM Unlock':'SIM ان لاک','Screen Lock Assistance':'اسکرین لاک مدد','FRP Unlock':'FRP ان لاک','Other Unlock Service':'دیگر ان لاک سروس','Request Unlock Online':'آن لائن ان لاک درخواست','Request Unlock on WhatsApp':'واٹس ایپ پر ان لاک درخواست','Choose Language':'زبان منتخب کریں','Sign in / Sign up':'سائن اِن / سائن اَپ','Your Cart':'آپ کی ٹوکری','Secure Checkout':'محفوظ ادائیگی'}
+};
+
+const I18N_SELECTS = {
+  buyRequest:['Buy product','Book product','Ask about availability'],
+  repairPart:['Screen / Display','Back Cover','Headset / Earpiece','Microphone','Charging Port','Battery','Camera','Speaker','Power Button','Volume Buttons','Other'],
+  unlockType:['Network / Carrier Unlock','SIM Unlock','Screen Lock Assistance','FRP Unlock','Account/Activation Service — eligibility check','Other Unlock Service']
+};
+
+function currentLangCode(name){ const hit=languages.find(x=>x[0]===name); return hit?hit[1]:'EN'; }
+function translateSelect(id, keys, dict){
+  const el=document.getElementById(id); if(!el) return;
+  const old=el.value;
+  el.innerHTML=keys.map(k=>`<option value="${escapeAttr(k)}">${escapeHtml(dict[k]||ALAARAJI_I18N.EN[k]||k)}</option>`).join('');
+  if(keys.includes(old)) el.value=old;
+}
+function applyLanguage(code){
+  const dict=ALAARAJI_I18N[code]||ALAARAJI_I18N.EN;
+  document.querySelectorAll('nav a, .badge, h2, p, label, button, .section-sub, .note, .hero-card p, .hero-card .ghost, .hero-card .primary, .cart-bar span, .cart-bar b, .modal-head h2, .modal-card > p, footer').forEach(el=>{
+    if(!el.dataset.i18n && el.textContent.trim()) el.dataset.i18n=el.textContent.trim();
+  });
+  document.documentElement.lang=code.toLowerCase();
+  document.documentElement.dir=dict.dir;
+  document.body.classList.toggle('rtl',dict.dir==='rtl');
+  document.querySelectorAll('nav a, .badge, h2, p, label, button, .section-sub, .note, .hero-card p, .hero-card .ghost, .hero-card .primary, .cart-bar span, .cart-bar b, .modal-head h2, .modal-card > p, footer').forEach(el=>{
+    const raw=el.dataset.i18n || el.textContent.trim();
+    if(dict[raw]) { el.dataset.i18n=raw; el.textContent=dict[raw]; }
+  });
+  document.querySelectorAll('textarea[placeholder]').forEach(el=>{ const raw=el.dataset.i18nPlaceholder||el.getAttribute('placeholder'); if(dict[raw]){el.dataset.i18nPlaceholder=raw;el.placeholder=dict[raw];} });
+  translateSelect('buyRequest',I18N_SELECTS.buyRequest,dict);
+  translateSelect('repairPart',I18N_SELECTS.repairPart,dict);
+  translateSelect('unlockType',I18N_SELECTS.unlockType,dict);
+  const unlockTitle=document.querySelector('#unlock .section-title'); if(unlockTitle) unlockTitle.textContent=dict['Unlock Your Product']||unlockTitle.textContent;
+  const welcome=document.getElementById('welcomeEn'), welcomeAr=document.getElementById('welcomeAr');
+  if(welcome && welcomeAr){ welcome.textContent=code==='AR'?'مرحبا بك في الاعرجي ستور':'WELCOME TO ALAARAJI STORE'; welcomeAr.textContent=code==='AR'?'متجر الاعرجي':'مرحبا بك في الاعرجي ستور'; }
+  localStorage.setItem('alaarajiLanguage',code);
+  window.dispatchEvent(new CustomEvent('alaaraji-language-changed',{detail:{code}}));
+}
+
+// Mark stable UI strings once, then translate them without destroying icons or click handlers.
+function setLanguage(langName){
+  const code=currentLangCode(langName);
+  closeModal('langModal');
+  applyLanguage(code);
+  toast((ALAARAJI_I18N[code]?.['Choose Language']||'Language')+': '+langName);
+}
+
+// Restore the user's language after refresh.
+(function(){
+  const saved=localStorage.getItem('alaarajiLanguage');
+  if(saved && ALAARAJI_I18N[saved]) setTimeout(()=>applyLanguage(saved),0);
+})();
+
+// FRP is now part of the unlock service and Arabic wording is explicitly supported.
+
+</script>
+</body></html>
