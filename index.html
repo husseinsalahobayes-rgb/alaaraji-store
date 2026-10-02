@@ -67,6 +67,7 @@ footer{padding:50px 6%;text-align:center;color:#777;border-top:1px solid #161616
 .booking-stats{display:flex;gap:8px;color:#858585;font-size:13px;margin:15px 2px}
 .buy-product-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;max-height:600px;overflow:auto;padding:2px 4px 6px 2px}
 .buy-product-card{position:relative;padding:17px;border-radius:19px;background:linear-gradient(145deg,#181818,#0d0d0d);border:1px solid rgba(255,255,255,.07);transition:.2s;cursor:pointer;min-height:170px}
+.buy-product-card{display:block;width:100%;text-align:left;color:inherit;font:inherit;appearance:none;-webkit-appearance:none}
 .buy-product-card:hover{transform:translateY(-3px);border-color:rgba(215,173,75,.55);box-shadow:0 15px 40px rgba(0,0,0,.35)}
 .buy-product-card.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 18px 50px rgba(215,173,75,.12)}
 .buy-brand{font-size:11px;color:var(--gold2);font-weight:800;letter-spacing:1px;text-transform:uppercase}
@@ -383,12 +384,12 @@ function renderBuyProducts() {
   const arr=getFilteredBuyProducts();
   count.textContent=arr.length+' products';
   grid.innerHTML=arr.map((p,i)=>`
-    <article class="buy-product-card ${selectedBuyProduct?.name===p.name?'selected':''}" onclick="selectBuyProduct('${escapeAttr(p.name)}')">
+    <button type="button" class="buy-product-card ${selectedBuyProduct?.name===p.name?'selected':''}" data-product-name="${escapeHtml(p.name)}">
       <div class="buy-brand">${escapeHtml(p.brand)}</div>
       <div class="buy-device-icon">${escapeHtml(productIcon(p.brand))}</div>
       <div class="buy-product-name">${escapeHtml(p.name)}</div>
       <div class="buy-price">${formatIQD(p.price)}</div>
-    </article>`).join('');
+    </button>`).join('');
   empty.hidden=arr.length!==0;
 }
 function selectBuyProduct(name) {
@@ -440,7 +441,19 @@ function bookOnline() {
   const total=d.price*d.quantity;
   toast("Booking prepared: "+d.model+" — "+formatIQD(total));
 }
-document.addEventListener('DOMContentLoaded',()=>{initBuyBrands();renderBuyProducts();});
+document.addEventListener('DOMContentLoaded',()=>{
+  initBuyBrands();
+  renderBuyProducts();
+  const grid=document.getElementById('buyProductGrid');
+  if(grid){
+    grid.addEventListener('click',function(e){
+      const card=e.target.closest('.buy-product-card');
+      if(!card || !grid.contains(card)) return;
+      const name=card.getAttribute('data-product-name');
+      selectBuyProduct(name);
+    });
+  }
+});
 </script>
 
 <script id="service-script">
