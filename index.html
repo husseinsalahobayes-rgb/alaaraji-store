@@ -91,10 +91,11 @@ footer{padding:50px 6%;text-align:center;color:#777;border-top:1px solid #161616
 
 </head>
 <body>
+<script>if(history in window){try{history.scrollRestoration="manual"}catch(e){}}</script>
 <div class="bg-grid"></div><div class="glow g1"></div><div class="glow g2"></div>
 <nav><div class="logo">AL<span>AARAJI</span> STORE</div><div style="display:flex;gap:14px;align-items:center" class="nav-links"><a href="#booking" style="color:#ddd;text-decoration:none;font-size:13px">Book</a><a href="#repair" style="color:#ddd;text-decoration:none;font-size:13px">Repair</a><a href="#unlock" style="color:#ddd;text-decoration:none;font-size:13px">Unlock</a></div><div class="nav-actions">
 <button class="icon-btn" title="Language" onclick="openModal('langModal')">🌐</button>
-<button id="accountButton" class="icon-btn" title="Account" onclick="openModal('authModal')">👤 <span id="accountLabel" style="font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span></button>
+<button id="accountButton" class="icon-btn" title="Account" onclick="openModal('authModal')">👤 <span id="accountLabel" style="font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span></button><button id="navSignOutButton" class="icon-btn" title="Sign out" onclick="signOutAlaaraji()" style="display:none">🚪</button>
 <button class="icon-btn" title="Cart" onclick="openCart()">🛒 <span id="cartCount">0</span></button>
 </div></nav>
 
@@ -807,7 +808,9 @@ function updateAccountUI(user){
   const prompt=document.getElementById('authPrompt');
   const label=document.getElementById('accountLabel');
   if(!status) return;
+  const navSignOut=document.getElementById('navSignOutButton');
   if(user){
+    if(navSignOut) navSignOut.style.display='inline-flex';
     const name=user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Google User';
     const email=user.email || '';
     const avatar=user.user_metadata?.avatar_url || '';
@@ -820,6 +823,7 @@ function updateAccountUI(user){
     if(prompt) prompt.textContent='You are signed in.';
     if(choices) choices.style.display='none';
   }else{
+    if(navSignOut) navSignOut.style.display='none';
     if(label) label.textContent='';
     status.innerHTML='';
     if(prompt) prompt.textContent='Choose a sign-in method.';
@@ -834,15 +838,30 @@ async function refreshAuthUI(){
 }
 
 async function signOutAlaaraji(){
-  if(!alaarajiSupabase) return;
-  const {error}=await alaarajiSupabase.auth.signOut();
-  if(error){ toast('Could not sign out. Please try again.'); return; }
-  updateAccountUI(null);
-  document.getElementById('authArea').innerHTML='';
-  toast('You have been signed out.');
+  try{
+    if(!alaarajiSupabase) await initAlaarajiBackend();
+    if(!alaarajiSupabase){ toast('Supabase is not connected.'); return; }
+    const {error}=await alaarajiSupabase.auth.signOut();
+    if(error){ console.error(error); toast('Could not sign out: '+error.message); return; }
+    updateAccountUI(null);
+    const area=document.getElementById('authArea');
+    if(area) area.innerHTML='';
+    closeModal('authModal');
+    toast('You have been signed out.');
+  }catch(err){
+    console.error(err);
+    toast('Could not sign out. Please try again.');
+  }
 }
 
 window.addEventListener('DOMContentLoaded', async ()=>{
+  // Always open the store at the welcome/hero screen, never inside Book or a selected device.
+  try{
+    if(window.location.hash){ history.replaceState(null, document.title, window.location.pathname + window.location.search); }
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+    setTimeout(()=>window.scrollTo({top:0,left:0,behavior:'auto'}),50);
+  }catch(e){}
+
   await initAlaarajiBackend();
   if(!alaarajiSupabase) return;
 
