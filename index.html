@@ -349,7 +349,130 @@ async function social(provider){
   toast(provider+' login will be connected next.');
 }
 function emailAuth(){
- document.getElementById('authArea').innerHTML=`<div class="field"><label>Email address</label><input type="email" placeholder="name@example.com"></div><div class="field"><label>Password</label><input type="password" placeholder="••••••••"></div><button class="primary" style="width:100%;margin-top:15px" onclick="toast('Connect Firebase/Supabase for real email authentication.')">Continue</button>`;
+ document.getElementById('authArea').innerHTML=`
+   <div style="display:grid;gap:14px">
+     <div class="field">
+       <label>Email address</label>
+       <input id="emailAuthEmail" type="email" placeholder="name@gmail.com" autocomplete="email">
+     </div>
+     <div class="field">
+       <label>Password</label>
+       <input id="emailAuthPassword" type="password" placeholder="••••••••" autocomplete="current-password">
+     </div>
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+       <button class="primary" onclick="signUpWithEmail()">Create account</button>
+       <button class="primary" onclick="signInWithEmail()">Sign in</button>
+     </div>
+     <button class="ghost" style="width:100%;margin-top:2px" onclick="resendConfirmationEmail()">Resend confirmation email</button>
+     <button class="ghost" style="width:100%;margin-top:2px" onclick="resetEmailPassword()">Forgot password?</button>
+     <div id="emailAuthMessage" style="font-size:14px;line-height:1.6;color:#ddd"></div>
+   </div>`;
+}
+
+function validAlaarajiEmail(email){
+ const e=String(email||'').trim().toLowerCase();
+ return /^[^\s@]+@(gmail\.com|icloud\.com)$/.test(e);
+}
+
+async function ensureAlaarajiAuth(){
+ if(!alaarajiSupabase) await initAlaarajiBackend();
+ return !!alaarajiSupabase;
+}
+
+async function signUpWithEmail(){
+ const email=document.getElementById('emailAuthEmail')?.value.trim().toLowerCase();
+ const password=document.getElementById('emailAuthPassword')?.value||'';
+ const message=document.getElementById('emailAuthMessage');
+ if(!message) return;
+ if(!validAlaarajiEmail(email)){
+   message.textContent='Please use a Gmail or iCloud address (example@gmail.com or example@icloud.com).';
+   return;
+ }
+ if(password.length<6){
+   message.textContent='Password must contain at least 6 characters.';
+   return;
+ }
+ message.textContent='Creating your account...';
+ if(!(await ensureAlaarajiAuth())){ message.textContent='Supabase is not connected. Please refresh the page and try again.'; return; }
+ const redirectTo=window.location.origin+window.location.pathname;
+ const {data,error}=await alaarajiSupabase.auth.signUp({
+   email,
+   password,
+   options:{emailRedirectTo:redirectTo}
+ });
+ if(error){
+   console.error('Email sign-up error:',error);
+   message.textContent='Registration error: '+error.message;
+   return;
+ }
+ if(data?.session){
+   updateAccountUI(data.user);
+   message.textContent='✓ Account created and signed in successfully.';
+   toast('Welcome to Alaaraji Store.');
+ }else{
+   message.innerHTML='✓ Account created.<br>Please check your email and click the confirmation link before signing in.';
+   toast('Confirmation email sent.');
+ }
+}
+
+async function signInWithEmail(){
+ const email=document.getElementById('emailAuthEmail')?.value.trim().toLowerCase();
+ const password=document.getElementById('emailAuthPassword')?.value||'';
+ const message=document.getElementById('emailAuthMessage');
+ if(!message) return;
+ if(!validAlaarajiEmail(email)){
+   message.textContent='Please use a Gmail or iCloud address.';
+   return;
+ }
+ if(!password){ message.textContent='Please enter your password.'; return; }
+ message.textContent='Signing in...';
+ if(!(await ensureAlaarajiAuth())){ message.textContent='Supabase is not connected. Please refresh the page and try again.'; return; }
+ const {data,error}=await alaarajiSupabase.auth.signInWithPassword({email,password});
+ if(error){
+   console.error('Email sign-in error:',error);
+   message.textContent='Sign-in error: '+error.message;
+   return;
+ }
+ updateAccountUI(data.user);
+ message.textContent='✓ Signed in successfully.';
+ closeModal('authModal');
+ toast('Welcome, '+(data.user.email||'Alaaraji Store customer'));
+}
+
+async function resendConfirmationEmail(){
+ const email=document.getElementById('emailAuthEmail')?.value.trim().toLowerCase();
+ const message=document.getElementById('emailAuthMessage');
+ if(!message) return;
+ if(!validAlaarajiEmail(email)){ message.textContent='Please enter your Gmail or iCloud address first.'; return; }
+ message.textContent='Sending confirmation email...';
+ if(!(await ensureAlaarajiAuth())){ message.textContent='Supabase is not connected. Please refresh the page and try again.'; return; }
+ const redirectTo=window.location.origin+window.location.pathname;
+ const {error}=await alaarajiSupabase.auth.resend({type:'signup',email,options:{emailRedirectTo:redirectTo}});
+ if(error){
+   console.error('Confirmation email error:',error);
+   message.textContent='Could not resend email: '+error.message;
+   return;
+ }
+ message.textContent='✓ A new confirmation email has been sent.';
+ toast('Confirmation email sent.');
+}
+
+async function resetEmailPassword(){
+ const email=document.getElementById('emailAuthEmail')?.value.trim().toLowerCase();
+ const message=document.getElementById('emailAuthMessage');
+ if(!message) return;
+ if(!validAlaarajiEmail(email)){ message.textContent='Please enter your Gmail or iCloud address first.'; return; }
+ message.textContent='Sending password reset email...';
+ if(!(await ensureAlaarajiAuth())){ message.textContent='Supabase is not connected. Please refresh the page and try again.'; return; }
+ const redirectTo=window.location.origin+window.location.pathname;
+ const {error}=await alaarajiSupabase.auth.resetPasswordForEmail(email,{redirectTo});
+ if(error){
+   console.error('Password reset error:',error);
+   message.textContent='Could not send reset email: '+error.message;
+   return;
+ }
+ message.textContent='✓ Password reset instructions were sent to your email.';
+ toast('Password reset email sent.');
 }
 function phoneAuth(){
  document.getElementById('authArea').innerHTML=`<div class="field"><label>Search country or calling code</label><input id="countrySearch" class="country-search" placeholder="Iraq, +964..." oninput="filterCountries()"></div><div class="country-list" id="countryList"></div><div class="field"><label>Phone number</label><input type="tel" placeholder="Phone number"></div><button class="primary" style="width:100%;margin-top:15px" onclick="toast('OTP interface is ready — connect your SMS provider/backend.')">Send verification code</button>`;
