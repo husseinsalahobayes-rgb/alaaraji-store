@@ -815,6 +815,7 @@ function updateAccountUI(user){
     status.innerHTML=`<div style="display:flex;align-items:center;gap:12px;padding:14px;border:1px solid rgba(215,173,75,.35);border-radius:16px;background:rgba(215,173,75,.07)">
       ${avatar ? `<img src="${escapeAttr(avatar)}" alt="" style="width:46px;height:46px;border-radius:50%;object-fit:cover;border:1px solid #d7ad4b">` : `<div style="width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#d7ad4b;color:#111;font-weight:900">${escapeHtml(name.charAt(0).toUpperCase())}</div>`}
       <div style="min-width:0;flex:1"><div style="font-weight:800;color:#f3d27a">${escapeHtml(name)}</div><div style="font-size:12px;color:#aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(email)}</div></div>
+      <button type="button" onclick="signOutAlaaraji()" style="padding:10px 14px;border-radius:12px;border:1px solid rgba(215,173,75,.45);background:#171717;color:#f3d27a;font-weight:800;cursor:pointer;white-space:nowrap">🚪 Sign out</button>
     </div>`;
     if(prompt) prompt.textContent='You are signed in.';
     if(choices) choices.style.display='none';
